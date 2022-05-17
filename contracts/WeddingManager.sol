@@ -48,6 +48,7 @@ contract WeddingManager{
 
     //exchange the two NFT rings
     // does it need to be 2 different functions? (or one used twice) so that each partner does the transfer?
+    // we need to make sure both the wallets contain the ring NFTs
 
     function sendEther(uint _weddingId) external payable {
         require(weddings[_weddingId].partner1 != msg.sender && weddings[_weddingId].partner2 != msg.sender, "Address is Partner");
