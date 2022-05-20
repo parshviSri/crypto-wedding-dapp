@@ -15,8 +15,9 @@ contract WeddingManager {
         uint256 balance;
     }
 
-    uint256 private counter;
-    mapping(uint256 => Wedding) public weddings;
+    uint private counter;
+    event WeddingCreated(uint tokenId);
+    mapping (uint => Wedding) public weddings;
 
     modifier isPartner(uint256 weddingId, address wallet) {
         require(
@@ -52,6 +53,7 @@ contract WeddingManager {
         Partner memory partner1 = Partner(_partner1Wallet, _partner1Name, 0);
         Partner memory partner2 = Partner(_partner2Wallet, _partner2Name, 0);
         weddings[counter] = Wedding(partner1, partner2, thirdParty, 0);
+        emit WeddingCreated(counter);
         counter++;
     }
 
