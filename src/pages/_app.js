@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import '../styles/globals.css'
 import {useState,useEffect} from 'react';
+import { ethers } from 'ethers';
 
 function MyApp({ Component, pageProps }) {
   const[con , setCon] = useState(false);
@@ -9,13 +10,24 @@ function MyApp({ Component, pageProps }) {
     connectWallet();
   },[])
   const connectWallet = async() =>{
+    
     if(window.ethereum){
       setCon(true)
       const account = await window.ethereum.request({method:'eth_accounts'});
       if(account.length==0){
         const connectAccount = await window.ethereum.request({method:'eth_requestAccounts'})
       }
+      try{
+      //   const provider = new ethers.providers.InfuraProvider();
+      // const ensDomain = await provider.lookupAddress(account);
+      // setUser(ensDomain)
       setUser(account.toString().substr(0,8));
+      }
+    catch(err){
+      setUser(account.toString().substr(0,8));
+
+    }
+      
     }
   }
   return (
@@ -28,7 +40,7 @@ function MyApp({ Component, pageProps }) {
       <Link href='/register'>
         <a className='p-6'>Register</a>
       </Link>
-      <Link href='/wedding'>
+      <Link href={{ pathname: '/wedding', query: { id:0 } }}>
         <a className='p-6'>Wedding</a>
       </Link>
       </div>

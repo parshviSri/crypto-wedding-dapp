@@ -13,6 +13,7 @@ contract WeddingManager{
     }
 
     uint private counter;
+    event WediingCreated(uint tokenId);
     mapping (uint => Wedding) public weddings;
 
     modifier isPartner(uint weddingId, address wallet){
@@ -39,6 +40,7 @@ contract WeddingManager{
         }
 
         weddings[counter] = Wedding(_partner1, _partner2, thirdParty, _partnerName1, _partnerName2, 0);
+        emit WediingCreated(counter);
         counter++;
     }
 
