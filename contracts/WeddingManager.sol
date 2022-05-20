@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.4;
 
-contract WeddingManager {
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "./Ring.sol";
+
+contract WeddingManager is Ownable {
+
     struct Partner {
         address wallet;
         string name;
         uint256 ringId;
+        bool sentRing;
     }
 
     struct Wedding {
@@ -15,14 +20,23 @@ contract WeddingManager {
         uint256 balance;
     }
 
-    uint private counter;
-    event WeddingCreated(uint tokenId);
-    mapping (uint => Wedding) public weddings;
+    uint256 private counter;
+    Ring private ringContract;
+    mapping(uint256 => Wedding) public startedWeddings;
+    mapping(uint256 => Wedding) public completedWeddings;
+    mapping(address => uint256) public partnerToWedding;
+
+    event WeddingCreated(uint256 tokenId);
+    event RingCreated(uint256 ringId);
+
+    constructor() {
+        // create and deploy ring contract here ??
+    }
 
     modifier isPartner(uint256 weddingId, address wallet) {
         require(
-            weddings[weddingId].partner1.wallet == wallet ||
-                weddings[weddingId].partner2.wallet == wallet,
+            startedWeddings[weddingId].partner1.wallet == wallet ||
+            startedWeddings[weddingId].partner2.wallet == wallet,
             "Address is not Partner"
         );
         _;
@@ -30,12 +44,16 @@ contract WeddingManager {
 
     modifier isPartnerOrThirdParty(uint256 weddingId, address wallet) {
         require(
-            weddings[weddingId].partner1.wallet == wallet ||
-                weddings[weddingId].partner2.wallet == wallet ||
-                weddings[weddingId].thirdParty == wallet,
+            startedWeddings[weddingId].partner1.wallet == wallet ||
+                startedWeddings[weddingId].partner2.wallet == wallet ||
+                startedWeddings[weddingId].thirdParty == wallet,
             "Address is not Partner or Third Party"
         );
         _;
+    }
+
+    function setRingContractAddress(address _address) external onlyOwner {
+        ringContract = Ring(_address);
     }
 
     function createWedding(
@@ -50,17 +68,63 @@ contract WeddingManager {
         } else {
             thirdParty = msg.sender;
         }
-        Partner memory partner1 = Partner(_partner1Wallet, _partner1Name, 0);
-        Partner memory partner2 = Partner(_partner2Wallet, _partner2Name, 0);
-        weddings[counter] = Wedding(partner1, partner2, thirdParty, 0);
+        Partner memory partner1 = Partner(_partner1Wallet, _partner1Name, 0, false);
+        Partner memory partner2 = Partner(_partner2Wallet, _partner2Name, 0, false);
+        startedWeddings[counter] = Wedding(partner1, partner2, thirdParty, 0);
         emit WeddingCreated(counter);
+
+        partnerToWedding[_partner1Wallet] = counter;
+        partnerToWedding[_partner2Wallet] = counter;
+
         counter++;
     }
 
-    function createRings(uint256 _weddingId)
-        external
-        isPartnerOrThirdParty(_weddingId, msg.sender)
-    {}
+    function getPartnerFromAddress(address partner) internal returns (address, string) {
+        require(partnerToWedding[partner] != 0, "Wedding doesn't exist");
+        uint weddingId = partnerToWedding[partner];
+        if (startedWeddings[weddingId].partner1.wallet == partner) {
+            return (startedWeddings[weddingId].partner1.wallet, startedWeddings[weddingId].partner2.name);
+        } else {
+            return (startedWeddings[weddingId].partner1.wallet, startedWeddings[weddingId].partner1.name);
+        }
+
+    }
+    function getOtherWeddingPartnerAddress(address partner) internal returns (address, string) {
+        require(partnerToWedding[partner] != 0, "Wedding doesn't exist");
+        uint weddingId = partnerToWedding[partner];
+        if (startedWeddings[weddingId].partner1.wallet == partner) {
+            return (startedWeddings[weddingId].partner2.wallet, startedWeddings[weddingId].partner2.name);
+        } else {
+            return (startedWeddings[weddingId].partner1.wallet, startedWeddings[weddingId].partner1.name);
+        }
+    }
+
+    function createRing() public {
+        require(
+            partnerToWedding[msg.sender] != 0,
+            "Wedding hasn't been created yet"
+        );
+        uint weddingId = partnerToWedding[msg.sender];
+        uint ringId = ringContract.mint(msg.sender);
+
+        if (startedWeddings[weddingId].partner1.wallet == msg.sender) {
+            startedWeddings[weddingId].partner1.ringId = ringId;
+        } 
+        if (startedWeddings[weddingId].partner2.wallet == msg.sender) {
+            startedWeddings[weddingId].partner2.ringId = ringId;
+        } 
+
+        // does this get called after minting happens?
+        emit RingCreated(ringId);
+    }
+
+    function sendRing(uint ringId) public {
+        require(partnerToWedding[msg.sender], 'Ring not created');
+)
+        uint weddingId = partnerToWedding[msg.sender];
+
+        // ringContract.safeTransferFrom(p, getOtherWeddingPartnerAddress(p), p.ringId);
+    }
 
     //exchange the two NFT rings
     // does it need to be 2 different functions? (or one used twice) so that each partner does the transfer?
@@ -68,11 +132,11 @@ contract WeddingManager {
 
     function sendEther(uint256 _weddingId) external payable {
         require(
-            weddings[_weddingId].partner1.wallet != msg.sender &&
-                weddings[_weddingId].partner2.wallet != msg.sender,
+            startedWeddings[_weddingId].partner1.wallet != msg.sender &&
+                startedWeddings[_weddingId].partner2.wallet != msg.sender,
             "Address is Partner"
         );
-        weddings[_weddingId].balance += msg.value;
+        startedWeddings[_weddingId].balance += msg.value;
     }
 
     function withdrawEther(uint256 _weddingId, uint256 _amount)
@@ -80,15 +144,15 @@ contract WeddingManager {
         isPartner(_weddingId, msg.sender)
     {
         require(
-            weddings[_weddingId].balance >= _amount,
+            startedWeddings[_weddingId].balance >= _amount,
             "Not enough ether in balance"
         );
 
         uint256 result = _amount / 2;
-        (bool successPartner1, ) = weddings[_weddingId].partner1.wallet.call{
+        (bool successPartner1, ) = startedWeddings[_weddingId].partner1.wallet.call{
             value: result
         }("");
-        (bool successPartner2, ) = weddings[_weddingId].partner2.wallet.call{
+        (bool successPartner2, ) = startedWeddings[_weddingId].partner2.wallet.call{
             value: result
         }("");
 
@@ -104,6 +168,6 @@ contract WeddingManager {
         view
         returns (Wedding memory)
     {
-        return weddings[_weddingId];
+        return startedWeddings[_weddingId];
     }
 }
