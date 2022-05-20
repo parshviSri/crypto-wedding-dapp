@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Ring.sol";
 
 contract WeddingManager is Ownable {
-
     struct Partner {
         address wallet;
         string name;
@@ -36,7 +35,7 @@ contract WeddingManager is Ownable {
     modifier isPartner(uint256 weddingId, address wallet) {
         require(
             startedWeddings[weddingId].partner1.wallet == wallet ||
-            startedWeddings[weddingId].partner2.wallet == wallet,
+                startedWeddings[weddingId].partner2.wallet == wallet,
             "Address is not Partner"
         );
         _;
@@ -68,8 +67,18 @@ contract WeddingManager is Ownable {
         } else {
             thirdParty = msg.sender;
         }
-        Partner memory partner1 = Partner(_partner1Wallet, _partner1Name, 0, false);
-        Partner memory partner2 = Partner(_partner2Wallet, _partner2Name, 0, false);
+        Partner memory partner1 = Partner(
+            _partner1Wallet,
+            _partner1Name,
+            0,
+            false
+        );
+        Partner memory partner2 = Partner(
+            _partner2Wallet,
+            _partner2Name,
+            0,
+            false
+        );
         startedWeddings[counter] = Wedding(partner1, partner2, thirdParty, 0);
         emit WeddingCreated(counter);
 
@@ -79,23 +88,31 @@ contract WeddingManager is Ownable {
         counter++;
     }
 
-    function getPartnerFromAddress(address partner) internal returns (address, string) {
+    function getPartnerFromAddress(address partner)
+        internal
+        view
+        returns (address)
+    {
         require(partnerToWedding[partner] != 0, "Wedding doesn't exist");
-        uint weddingId = partnerToWedding[partner];
+        uint256 weddingId = partnerToWedding[partner];
         if (startedWeddings[weddingId].partner1.wallet == partner) {
-            return (startedWeddings[weddingId].partner1.wallet, startedWeddings[weddingId].partner2.name);
+            return (startedWeddings[weddingId].partner1.wallet);
         } else {
-            return (startedWeddings[weddingId].partner1.wallet, startedWeddings[weddingId].partner1.name);
+            return (startedWeddings[weddingId].partner1.wallet);
         }
-
     }
-    function getOtherWeddingPartnerAddress(address partner) internal returns (address, string) {
+
+    function getOtherWeddingPartnerAddress(address partner)
+        internal
+        view
+        returns (address)
+    {
         require(partnerToWedding[partner] != 0, "Wedding doesn't exist");
-        uint weddingId = partnerToWedding[partner];
+        uint256 weddingId = partnerToWedding[partner];
         if (startedWeddings[weddingId].partner1.wallet == partner) {
-            return (startedWeddings[weddingId].partner2.wallet, startedWeddings[weddingId].partner2.name);
+            return (startedWeddings[weddingId].partner2.wallet);
         } else {
-            return (startedWeddings[weddingId].partner1.wallet, startedWeddings[weddingId].partner1.name);
+            return (startedWeddings[weddingId].partner1.wallet);
         }
     }
 
@@ -104,25 +121,24 @@ contract WeddingManager is Ownable {
             partnerToWedding[msg.sender] != 0,
             "Wedding hasn't been created yet"
         );
-        uint weddingId = partnerToWedding[msg.sender];
-        uint ringId = ringContract.mint(msg.sender);
+        uint256 weddingId = partnerToWedding[msg.sender];
+        uint256 ringId = ringContract.mint(msg.sender);
 
         if (startedWeddings[weddingId].partner1.wallet == msg.sender) {
             startedWeddings[weddingId].partner1.ringId = ringId;
-        } 
+        }
         if (startedWeddings[weddingId].partner2.wallet == msg.sender) {
             startedWeddings[weddingId].partner2.ringId = ringId;
-        } 
+        }
 
         // does this get called after minting happens?
         emit RingCreated(ringId);
     }
 
-    function sendRing(uint ringId) public {
-        require(partnerToWedding[msg.sender], 'Ring not created');
-)
-        uint weddingId = partnerToWedding[msg.sender];
-
+    function sendRing(uint256 ringId) public {
+        require(partnerToWedding[msg.sender] != 0, "Ring not created");
+        uint256 weddingId = partnerToWedding[msg.sender];
+        // TODO
         // ringContract.safeTransferFrom(p, getOtherWeddingPartnerAddress(p), p.ringId);
     }
 
@@ -149,12 +165,14 @@ contract WeddingManager is Ownable {
         );
 
         uint256 result = _amount / 2;
-        (bool successPartner1, ) = startedWeddings[_weddingId].partner1.wallet.call{
-            value: result
-        }("");
-        (bool successPartner2, ) = startedWeddings[_weddingId].partner2.wallet.call{
-            value: result
-        }("");
+        (bool successPartner1, ) = startedWeddings[_weddingId]
+            .partner1
+            .wallet
+            .call{value: result}("");
+        (bool successPartner2, ) = startedWeddings[_weddingId]
+            .partner2
+            .wallet
+            .call{value: result}("");
 
         // what if one is successfull and the other one isn't? does it go thorugh?
         require(
