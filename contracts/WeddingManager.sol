@@ -26,10 +26,14 @@ contract WeddingManager is Ownable {
     mapping(address => uint256) public partnersGettingMarried;
 
     event WeddingCreated(uint256 tokenId);
-    event RingCreated(uint256 ringId);
+    event RingCreated(address createdFor, uint256 ringId, string uri);
+    event RingSent(address sentBy, address sentTo, uint256 ringId);
+    event WeddingComplete(uint256 weddingId);
 
     constructor() {
-        // create and deploy ring contract here ??
+        // option 1: create and deploy WeddingRing contract manually and set the address here
+        // ringContact = address(0xd9145CCE52D386f254917e481eB44e9943F39138);
+        // option 2: create and deploy WeddingRing contract here
     }
 
     modifier isPartner(uint256 weddingId, address wallet) {
@@ -38,6 +42,11 @@ contract WeddingManager is Ownable {
                 startedWeddings[weddingId].partner2.wallet == wallet,
             "Address is not Partner"
         );
+        _;
+    }
+
+    modifier isWeddingCreated() {
+        require(partnersGettingMarried[msg.sender] != 0, "Wedding not created");
         _;
     }
 
@@ -88,20 +97,6 @@ contract WeddingManager is Ownable {
         counter++;
     }
 
-    function getPartnerFromAddress(address partner)
-        internal
-        view
-        returns (address)
-    {
-        require(partnersGettingMarried[partner] != 0, "Wedding doesn't exist");
-        uint256 weddingId = partnersGettingMarried[partner];
-        if (startedWeddings[weddingId].partner1.wallet == partner) {
-            return (startedWeddings[weddingId].partner1.wallet);
-        } else {
-            return (startedWeddings[weddingId].partner1.wallet);
-        }
-    }
-
     function getOtherWeddingPartnerAddress(address partner)
         internal
         view
@@ -116,14 +111,13 @@ contract WeddingManager is Ownable {
         }
     }
 
-    function createRing(string memory uri) public {
-        require(
-            partnersGettingMarried[msg.sender] != 0,
-            "Wedding hasn't been created yet"
-        );
+    function createRing(string memory _uri) public isWeddingCreated {
         uint256 weddingId = partnersGettingMarried[msg.sender];
-        uint256 ringId = ringContract.safeMint(msg.sender, uri);
 
+        // mint nft
+        uint256 ringId = ringContract.safeMint(msg.sender, _uri);
+
+        // store nft token id in wedding
         if (startedWeddings[weddingId].partner1.wallet == msg.sender) {
             startedWeddings[weddingId].partner1.ringId = ringId;
         }
@@ -132,19 +126,57 @@ contract WeddingManager is Ownable {
         }
 
         // does this get called after minting happens?
-        emit RingCreated(ringId);
+        emit RingCreated(msg.sender, ringId, _uri);
     }
 
-    function sendRing(uint256 _ringId, address _fromAddress) public {
-        require(partnersGettingMarried[msg.sender] != 0, "Ring not created");
+    function sendRing() public isWeddingCreated {
         uint256 weddingId = partnersGettingMarried[msg.sender];
-        // TODO
-        // ringContract.safeTransferFrom(p, getOtherWeddingPartnerAddress(p), p.ringId);
+        Partner storage fromPartner = startedWeddings[weddingId]
+            .partner1
+            .wallet == msg.sender
+            ? startedWeddings[weddingId].partner1
+            : startedWeddings[weddingId].partner2;
+
+        //check if a ring has been created
+        require(fromPartner.ringId != 0, "Ring not created");
+        address toAddress = getOtherWeddingPartnerAddress(fromPartner.wallet);
+
+        // transfer ring
+        ringContract.safeTransferFrom(
+            fromPartner.wallet,
+            toAddress,
+            fromPartner.ringId
+        );
+
+        emit RingSent(fromPartner.wallet, toAddress, fromPartner.ringId);
+
+        fromPartner.sentRing = true;
     }
 
-    //exchange the two NFT rings
-    // does it need to be 2 different functions? (or one used twice) so that each partner does the transfer?
-    // we need to make sure both the wallets contain the ring NFTs
+    // called after exchange is complete
+    function finishWedding() public isWeddingCreated {
+        uint256 weddingId = partnersGettingMarried[msg.sender];
+        Wedding memory w = startedWeddings[weddingId];
+        // check if the rings have been exchanged
+        require(
+            (w.partner1.sentRing && w.partner1.ringId != 0) &&
+                (w.partner2.sentRing && w.partner2.ringId != 0),
+            "Rings haven't been exchanged yet"
+        );
+
+        // add new entry to completed wedding mapping
+        completedWeddings[weddingId] = Wedding(
+            w.partner1,
+            w.partner2,
+            w.thirdParty,
+            0
+        );
+
+        // clear entry in startedWeddings mapping
+        delete startedWeddings[weddingId];
+
+        emit WeddingComplete(weddingId);
+    }
 
     function sendEther(uint256 _weddingId) external payable {
         require(
@@ -152,7 +184,7 @@ contract WeddingManager is Ownable {
                 startedWeddings[_weddingId].partner2.wallet != msg.sender,
             "Address is Partner"
         );
-        startedWeddings[_weddingId].balance += msg.value;
+        completedWeddings[_weddingId].balance += msg.value;
     }
 
     function withdrawEther(uint256 _weddingId, uint256 _amount)
@@ -160,16 +192,16 @@ contract WeddingManager is Ownable {
         isPartner(_weddingId, msg.sender)
     {
         require(
-            startedWeddings[_weddingId].balance >= _amount,
+            completedWeddings[_weddingId].balance >= _amount,
             "Not enough ether in balance"
         );
 
         uint256 result = _amount / 2;
-        (bool successPartner1, ) = startedWeddings[_weddingId]
+        (bool successPartner1, ) = completedWeddings[_weddingId]
             .partner1
             .wallet
             .call{value: result}("");
-        (bool successPartner2, ) = startedWeddings[_weddingId]
+        (bool successPartner2, ) = completedWeddings[_weddingId]
             .partner2
             .wallet
             .call{value: result}("");
@@ -186,6 +218,6 @@ contract WeddingManager is Ownable {
         view
         returns (Wedding memory)
     {
-        return startedWeddings[_weddingId];
+        return completedWeddings[_weddingId];
     }
 }
