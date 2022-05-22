@@ -31,10 +31,11 @@ contract WeddingManager is Ownable {
     event RingSent(address sentBy, address sentTo, uint ringId);
     event WeddingComplete(uint weddingId);
 
-    constructor() {
+    constructor(address _weddingRingContract) {
         // option 1: create and deploy WeddingRing contract manually and set the address here
         // ringContact = address(0xd9145CCE52D386f254917e481eB44e9943F39138);
         // option 2: create and deploy WeddingRing contract here
+        ringContract= WeddingRing(_weddingRingContract);
     }
 
     modifier isPartner(uint _weddingId, address _wallet){

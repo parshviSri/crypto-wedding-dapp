@@ -9,18 +9,19 @@
 
     const[formInput, updateFormInput] = useState({parterName1:'',partnerName2:'',partner1:'',partner2:''});
     const[tokenId, setTokenId] = useState(null);
-    const contractAddress ='0x5FbDB2315678afecb367f032d93F642f64180aa3';
+    const contractAddress ='0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9';
     const createWedding = async() =>{
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const weddingManager = new ethers.Contract(contractAddress, Wedding.abi,signer);
         const transaction= await weddingManager.createWedding(formInput.partner1,formInput.partner2, formInput.parterName1,formInput.partnerName2);
         await transaction.wait()
-        const event = await weddingManager.on("WediingCreated",(tokenId)=>{
+        const event = await weddingManager.on("WeddingCreated",(tokenId)=>{
             console.log(tokenId.toNumber());
             setTokenId(tokenId.toNumber());
             router.push( {pathname: '/wedding', query: { id:tokenId.toNumber() } })
         });
+        console.log(tokenId)
         console.log(event);
     }
     return(
