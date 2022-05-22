@@ -9,7 +9,7 @@
 
     const[formInput, updateFormInput] = useState({parterName1:'',partnerName2:'',partner1:'',partner2:''});
     const[tokenId, setTokenId] = useState(null);
-    const contractAddress ='0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9';
+    const contractAddress ='0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
     const createWedding = async() =>{
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();

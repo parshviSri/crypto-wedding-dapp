@@ -8,10 +8,10 @@ const Wedding =() =>{
     const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
     const router = useRouter();
     const {id} = router.query;
-    const contractAddress ='0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9';
+    const contractAddress ='0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
     const[wedingDetails, setWeddingDetails]= useState({partner1:{address:'',name:'',ringId:0,sentRing:false},partner2:{address:'',name:'',ringId:0,sentRing:false},thirdParty:'',balance:0,status:1});
-    const[ring1, setRing1]= useState({image:'',metadata:''});
-    const[ring2,setRing2] =useState({image:'',metadata:''});
+    const[ring1, setRing1]= useState('');
+    const[ring2,setRing2] =useState('');
     const [eventMessage,setEventMessage]= useState('');
     const giftEth=1 ^10-2;
     useEffect(()=>{
@@ -39,6 +39,7 @@ const Wedding =() =>{
                 balance:wedding.balance.toNumber(),
                 status:wedding.status.toNumber()
                 })
+                console.log(wedding);
             }
             catch(err){
                 
@@ -51,7 +52,7 @@ const Wedding =() =>{
         const file =e.target.files[0];
         const account = await window.ethereum.request({method:'eth_accounts'});
         try {
-            if(account.toString().toUpperCase() == wedingDetails.partner1.toUpperCase() || account.toString().toUpperCase() == wedingDetails.partner2.toUpperCase()){
+            if(account.toString().toUpperCase() == wedingDetails.partner1.address.toUpperCase() || account.toString().toUpperCase() == wedingDetails.partner2.address.toUpperCase()){
                 const added = await client.add(
                     file,
                     {
@@ -60,14 +61,14 @@ const Wedding =() =>{
                   )
                   const url = `https://ipfs.infura.io/ipfs/${added.path}`;
                   console.log(url);
-                    if(account.toString().toUpperCase() == wedingDetails.partner1.toUpperCase() ){
+                    if(account.toString().toUpperCase() == wedingDetails.partner1.address.toUpperCase() ){
                       const metadata= await uploadToIPFS(wedingDetails.partnerName1, wedingDetails.partnerName2,id,url);
-                      setRing1({image:url,metadata:metadata})
+                      setRing1(metadata)
       
                     }
-                    if(account.toString().toUpperCase() == wedingDetails.partner2.toUpperCase()){
+                    if(account.toString().toUpperCase() == wedingDetails.partner2.address.toUpperCase()){
                       const metadata= await uploadToIPFS(wedingDetails.partnerName2, wedingDetails.partnerName1,id,url);
-                      setRing2({image:url,metadata:metadata})
+                      setRing2(metadata)
                     }
             }
             
@@ -93,12 +94,15 @@ const Wedding =() =>{
       }
       const mintRing =async(tokenUri)=>{
         try{
+            console.log(tokenUri);
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             const weddingManager = new ethers.Contract(contractAddress, WeddingContract.abi,signer);
             const weddingRing = await weddingManager.createRing(tokenUri);
             console.log(weddingRing);
             const event = await weddingManager.on("RingCreated",(address, ringId, uri)=>{
+                console.log(address);
+                console.log(ringId);
                 console.log(uri);
             })
 

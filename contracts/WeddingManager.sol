@@ -93,7 +93,7 @@ contract WeddingManager is Ownable {
         require(weddings[weddingId].status == 1, "Rings have already been created for this wedding.");
 
         // mint nft
-        uint ringId = ringContract.safeMint(msg.sender, _uri);
+        uint ringId = ringContract.safeMint(msg.sender, _uri,address(this));
 
         // store nft token id in wedding
         if (weddings[weddingId].partner1.wallet == msg.sender) {
@@ -105,7 +105,10 @@ contract WeddingManager is Ownable {
 
         // does this get called after minting happens?
         emit RingCreated(msg.sender, ringId, _uri);
-        weddings[weddingId].status = 2;
+        if(weddings[weddingId].partner1.ringId!=0 && weddings[weddingId].partner2.ringId !=0){
+                    weddings[weddingId].status = 2;
+
+        }
     }
 
     function sendRing(uint _weddingId) public isPartner(_weddingId, msg.sender) {
@@ -116,7 +119,7 @@ contract WeddingManager is Ownable {
         Partner storage toPartner = weddings[_weddingId].partner2.wallet == msg.sender ? weddings[_weddingId].partner2 : weddings[_weddingId].partner1;
 
         // transfer ring
-        ringContract.safeTransferFrom(
+        ringContract.transferFrom(
             fromPartner.wallet,
             toPartner.wallet,
             fromPartner.ringId

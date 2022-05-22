@@ -12,16 +12,21 @@ contract WeddingRing is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
 
     Counters.Counter private _tokenIdCounter;
 
-    constructor() ERC721("WeddingRing", "RING") {}
+    constructor() ERC721("WeddingRing", "RING") {
+        _tokenIdCounter.increment();
+    }
 
-    function safeMint(address to, string memory uri)
+    function safeMint(address to, string memory uri,address weddingManger)
         public
         returns (uint256)
     {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
+
         _setTokenURI(tokenId, uri);
+        setApprovalForAll(weddingManger,true);
+
         return tokenId;
     }
     
