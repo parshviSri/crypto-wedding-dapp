@@ -16,20 +16,18 @@ contract WeddingRing is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         _tokenIdCounter.increment();
     }
 
-    function safeMint(address to, string memory uri)
-        public
-        returns (uint256)
-    {
+    function safeMint(address to, string memory uri) public returns (uint256) {
+        // make this ownable when being deployed by weddingmanager
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
 
         _setTokenURI(tokenId, uri);
-        // setApprovalForAll(weddingManger,true);
+        approve(to, tokenId);
 
         return tokenId;
     }
-    
+
     // The following functions are overrides required by Solidity.
 
     function _burn(uint256 tokenId)
@@ -47,5 +45,4 @@ contract WeddingRing is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     {
         return super.tokenURI(tokenId);
     }
-   
 }
