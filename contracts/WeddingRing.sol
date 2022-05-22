@@ -16,7 +16,7 @@ contract WeddingRing is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         _tokenIdCounter.increment();
     }
 
-    function safeMint(address to, string memory uri,address weddingManger)
+    function safeMint(address to, string memory uri)
         public
         returns (uint256)
     {
@@ -25,7 +25,7 @@ contract WeddingRing is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         _safeMint(to, tokenId);
 
         _setTokenURI(tokenId, uri);
-        setApprovalForAll(weddingManger,true);
+        // setApprovalForAll(weddingManger,true);
 
         return tokenId;
     }
@@ -47,4 +47,5 @@ contract WeddingRing is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     {
         return super.tokenURI(tokenId);
     }
+   
 }

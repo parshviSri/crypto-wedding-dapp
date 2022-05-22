@@ -9,6 +9,7 @@ contract WeddingManager is Ownable {
         address wallet;
         string name;
         uint ringId;
+        string tokeUri;
         bool sentRing;
     }
 
@@ -72,8 +73,8 @@ contract WeddingManager is Ownable {
         if (msg.sender != _partner1Wallet && msg.sender != _partner2Wallet) {
             thirdParty = msg.sender;
         }
-        Partner memory partner1 = Partner( _partner1Wallet, _partner1Name, 0, false);
-        Partner memory partner2 = Partner(_partner2Wallet, _partner2Name, 0, false);
+        Partner memory partner1 = Partner( _partner1Wallet, _partner1Name, 0, '',false);
+        Partner memory partner2 = Partner(_partner2Wallet, _partner2Name, 0,'', false);
 
         weddings[++counter] = Wedding(partner1, partner2, thirdParty, 0, 1);
         addressToWedding[_partner1Wallet] = counter;
@@ -93,14 +94,16 @@ contract WeddingManager is Ownable {
         require(weddings[weddingId].status == 1, "Rings have already been created for this wedding.");
 
         // mint nft
-        uint ringId = ringContract.safeMint(msg.sender, _uri,address(this));
+        uint ringId = ringContract.safeMint(msg.sender, _uri);
 
         // store nft token id in wedding
         if (weddings[weddingId].partner1.wallet == msg.sender) {
             weddings[weddingId].partner1.ringId = ringId;
+            weddings[weddingId].partner1.tokeUri= _uri;
         }
         if (weddings[weddingId].partner2.wallet == msg.sender) {
             weddings[weddingId].partner2.ringId = ringId;
+            weddings[weddingId].partner2.tokeUri= _uri;
         }
 
         // does this get called after minting happens?
@@ -117,8 +120,8 @@ contract WeddingManager is Ownable {
 
         Partner storage fromPartner = weddings[_weddingId].partner1.wallet == msg.sender ? weddings[_weddingId].partner1 : weddings[_weddingId].partner2;
         Partner storage toPartner = weddings[_weddingId].partner2.wallet == msg.sender ? weddings[_weddingId].partner2 : weddings[_weddingId].partner1;
-
-        // transfer ring
+        ringContract.approve(address(this),fromPartner.ringId);
+        //transfer ring
         ringContract.transferFrom(
             fromPartner.wallet,
             toPartner.wallet,
