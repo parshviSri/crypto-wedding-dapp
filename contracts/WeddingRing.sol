@@ -16,14 +16,14 @@ contract WeddingRing is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         _tokenIdCounter.increment();
     }
 
-    function safeMint(address to, string memory uri) public returns (uint256) {
-        // make this ownable when being deployed by weddingmanager
+    function mint(address to, string memory uri) public returns (uint256) {
+        // TODO: make this ownable when being deployed by weddingmanager
         uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
-
+        _mint(to, tokenId);
+        // TODO: figure out how to use safe mint instead
+        // _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
-        approve(to, tokenId);
+        _tokenIdCounter.increment();
 
         return tokenId;
     }

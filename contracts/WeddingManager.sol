@@ -8,7 +8,7 @@ contract WeddingManager is Ownable {
     struct Partner {
         address wallet;
         string name;
-        uint ringId;
+        uint256 ringId;
         string tokeUri;
         bool sentRing;
     }
@@ -18,29 +18,33 @@ contract WeddingManager is Ownable {
         Partner partner1;
         Partner partner2;
         address thirdParty;
-        uint balance;
-        uint status;
+        uint256 balance;
+        uint256 status;
     }
 
-    uint private counter;
+    uint256 private counter;
     WeddingRing private ringContract;
-    mapping(uint => Wedding) public weddings;
-    mapping(address => uint) public addressToWedding;
-    
-    event WeddingCreated(uint tokenId);
-    event RingCreated(address createdFor, uint ringId, string uri);
-    event RingSent(address sentBy, address sentTo, uint ringId);
-    event WeddingComplete(uint weddingId);
+    mapping(uint256 => Wedding) public weddings;
+    mapping(address => uint256) public addressToWedding;
+
+    event WeddingCreated(uint256 tokenId);
+    event RingCreated(address createdFor, uint256 ringId, string uri);
+    event RingSent(address sentBy, address sentTo, uint256 ringId);
+    event WeddingComplete(uint256 weddingId);
 
     constructor(address _weddingRingContract) {
         // option 1: create and deploy WeddingRing contract manually and set the address here
         // ringContact = address(0xd9145CCE52D386f254917e481eB44e9943F39138);
         // option 2: create and deploy WeddingRing contract here
-        ringContract= WeddingRing(_weddingRingContract);
+        ringContract = WeddingRing(_weddingRingContract);
     }
 
-    modifier isPartner(uint _weddingId, address _wallet){
-        require(weddings[_weddingId].partner1.wallet == _wallet || weddings[_weddingId].partner2.wallet == _wallet, "Address is not Partner");
+    modifier isPartner(uint256 _weddingId, address _wallet) {
+        require(
+            weddings[_weddingId].partner1.wallet == _wallet ||
+                weddings[_weddingId].partner2.wallet == _wallet,
+            "Address is not Partner"
+        );
         _;
     }
 
@@ -49,8 +53,11 @@ contract WeddingManager is Ownable {
         _;
     }
 
-    modifier weddingIdExists(uint _weddingId){
-        require(weddings[_weddingId].status != 0, "Wedding ID is not associated with a Wedding.");
+    modifier weddingIdExists(uint256 _weddingId) {
+        require(
+            weddings[_weddingId].status != 0,
+            "Wedding ID is not associated with a Wedding."
+        );
         _;
     }
 
@@ -65,7 +72,8 @@ contract WeddingManager is Ownable {
         string memory _partner2Name
     ) external {
         require(
-            weddings[addressToWedding[_partner1Wallet]].status == 0 && weddings[addressToWedding[_partner2Wallet]].status == 0, 
+            weddings[addressToWedding[_partner1Wallet]].status == 0 &&
+                weddings[addressToWedding[_partner2Wallet]].status == 0,
             "At least one of the partners is already married."
         );
 
@@ -73,8 +81,20 @@ contract WeddingManager is Ownable {
         if (msg.sender != _partner1Wallet && msg.sender != _partner2Wallet) {
             thirdParty = msg.sender;
         }
-        Partner memory partner1 = Partner( _partner1Wallet, _partner1Name, 0, '',false);
-        Partner memory partner2 = Partner(_partner2Wallet, _partner2Name, 0,'', false);
+        Partner memory partner1 = Partner(
+            _partner1Wallet,
+            _partner1Name,
+            0,
+            "",
+            false
+        );
+        Partner memory partner2 = Partner(
+            _partner2Wallet,
+            _partner2Name,
+            0,
+            "",
+            false
+        );
 
         weddings[++counter] = Wedding(partner1, partner2, thirdParty, 0, 1);
         addressToWedding[_partner1Wallet] = counter;
@@ -83,44 +103,70 @@ contract WeddingManager is Ownable {
     }
 
     // should we update the addresses ??
-    function updateWedding(uint _weddingId, string calldata _partner1Name, string calldata _partner2Name) external isWeddingCreated(msg.sender) {
-        require(weddings[_weddingId].status == 1, "Wedding has changed status, cannot be updated.");
+    function updateWedding(
+        uint256 _weddingId,
+        string calldata _partner1Name,
+        string calldata _partner2Name
+    ) external isWeddingCreated(msg.sender) {
+        require(
+            weddings[_weddingId].status == 1,
+            "Wedding has changed status, cannot be updated."
+        );
         weddings[_weddingId].partner1.name = _partner1Name;
         weddings[_weddingId].partner2.name = _partner2Name;
     }
 
-    function createRing(string memory _uri) public isWeddingCreated(msg.sender) {
-        uint weddingId = addressToWedding[msg.sender];
-        require(weddings[weddingId].status == 1, "Rings have already been created for this wedding.");
+    function createRing(string memory _uri)
+        public
+        isWeddingCreated(msg.sender)
+    {
+        uint256 weddingId = addressToWedding[msg.sender];
+        require(
+            weddings[weddingId].status == 1,
+            "Rings have already been created for this wedding."
+        );
 
         // mint nft
-        uint ringId = ringContract.safeMint(msg.sender, _uri);
+        uint256 ringId = ringContract.mint(address(this), _uri);
 
         // store nft token id in wedding
         if (weddings[weddingId].partner1.wallet == msg.sender) {
             weddings[weddingId].partner1.ringId = ringId;
-            weddings[weddingId].partner1.tokeUri= _uri;
+            weddings[weddingId].partner1.tokeUri = _uri;
         }
         if (weddings[weddingId].partner2.wallet == msg.sender) {
             weddings[weddingId].partner2.ringId = ringId;
-            weddings[weddingId].partner2.tokeUri= _uri;
+            weddings[weddingId].partner2.tokeUri = _uri;
         }
 
         // does this get called after minting happens?
         emit RingCreated(msg.sender, ringId, _uri);
-        if(weddings[weddingId].partner1.ringId!=0 && weddings[weddingId].partner2.ringId !=0){
-                    weddings[weddingId].status = 2;
-
+        if (
+            weddings[weddingId].partner1.ringId != 0 &&
+            weddings[weddingId].partner2.ringId != 0
+        ) {
+            weddings[weddingId].status = 2;
         }
     }
 
-    function sendRing(uint _weddingId) public isPartner(_weddingId, msg.sender) {
+    function sendRing(uint256 _weddingId)
+        public
+        isPartner(_weddingId, msg.sender)
+    {
+        require(
+            weddings[_weddingId].status == 2,
+            "Rings have not been created or wedding is completed."
+        );
 
-        require(weddings[_weddingId].status == 2, "Rings have not been created or wedding is completed.");
+        Partner storage fromPartner = weddings[_weddingId].partner1.wallet ==
+            msg.sender
+            ? weddings[_weddingId].partner1
+            : weddings[_weddingId].partner2;
+        Partner storage toPartner = weddings[_weddingId].partner2.wallet ==
+            msg.sender
+            ? weddings[_weddingId].partner2
+            : weddings[_weddingId].partner1;
 
-        Partner storage fromPartner = weddings[_weddingId].partner1.wallet == msg.sender ? weddings[_weddingId].partner1 : weddings[_weddingId].partner2;
-        Partner storage toPartner = weddings[_weddingId].partner2.wallet == msg.sender ? weddings[_weddingId].partner2 : weddings[_weddingId].partner1;
-        ringContract.approve(address(this),fromPartner.ringId);
         //transfer ring
         ringContract.transferFrom(
             fromPartner.wallet,
@@ -129,49 +175,85 @@ contract WeddingManager is Ownable {
         );
 
         fromPartner.sentRing = true;
-        emit RingSent(fromPartner.wallet, toPartner.wallet, fromPartner.ringId);  
+        emit RingSent(fromPartner.wallet, toPartner.wallet, fromPartner.ringId);
 
-        if(toPartner.sentRing){
+        if (toPartner.sentRing) {
             weddings[_weddingId].status = 3;
             emit WeddingComplete(_weddingId);
-        }     
+        }
     }
 
-    function sendEther(uint _weddingId) external payable weddingIdExists(_weddingId){
+    function sendEther(uint256 _weddingId)
+        external
+        payable
+        weddingIdExists(_weddingId)
+    {
         require(
-            weddings[_weddingId].partner1.wallet != msg.sender && weddings[_weddingId].partner2.wallet != msg.sender,
+            weddings[_weddingId].partner1.wallet != msg.sender &&
+                weddings[_weddingId].partner2.wallet != msg.sender,
             "Address is Partner"
         );
         weddings[_weddingId].balance += msg.value;
     }
 
-    function withdrawEther(uint _weddingId, uint _amount) external isPartner(_weddingId, msg.sender) {
-        require(weddings[_weddingId].balance >= _amount, "Not enough ether in balance");
+    function withdrawEther(uint256 _weddingId, uint256 _amount)
+        external
+        isPartner(_weddingId, msg.sender)
+    {
+        require(
+            weddings[_weddingId].balance >= _amount,
+            "Not enough ether in balance"
+        );
 
         weddings[_weddingId].balance -= _amount;
 
-        uint result = _amount / 2;
-        (bool successPartner1, ) = weddings[_weddingId].partner1.wallet.call{value: result}("");
-        (bool successPartner2, ) = weddings[_weddingId].partner2.wallet.call{value: result}("");
+        uint256 result = _amount / 2;
+        (bool successPartner1, ) = weddings[_weddingId].partner1.wallet.call{
+            value: result
+        }("");
+        (bool successPartner2, ) = weddings[_weddingId].partner2.wallet.call{
+            value: result
+        }("");
 
-        require(successPartner1 && successPartner2, "There was an error! Ether was not sent.");
+        require(
+            successPartner1 && successPartner2,
+            "There was an error! Ether was not sent."
+        );
     }
 
-    function getWeddingById(uint _weddingId) external view returns (Wedding memory) {
+    function getWeddingById(uint256 _weddingId)
+        external
+        view
+        returns (Wedding memory)
+    {
         return weddings[_weddingId];
     }
 
-    function getWeddingBalance(uint _weddingId) public view weddingIdExists(_weddingId) returns (uint){
+    function getWeddingBalance(uint256 _weddingId)
+        public
+        view
+        weddingIdExists(_weddingId)
+        returns (uint256)
+    {
         return weddings[_weddingId].balance;
     }
 
-    function getWeddingStatus(uint _weddingId) public view weddingIdExists(_weddingId) returns (uint){
+    function getWeddingStatus(uint256 _weddingId)
+        public
+        view
+        weddingIdExists(_weddingId)
+        returns (uint256)
+    {
         return weddings[_weddingId].status;
     }
 
-    function annulMarriage(uint _weddingId) external isPartner(_weddingId, msg.sender) weddingIdExists(_weddingId)  {
+    function annulMarriage(uint256 _weddingId)
+        external
+        isPartner(_weddingId, msg.sender)
+        weddingIdExists(_weddingId)
+    {
         require(weddings[_weddingId].status == 3, "Wedding is not completed.");
-        
+
         delete addressToWedding[weddings[_weddingId].partner1.wallet];
         delete addressToWedding[weddings[_weddingId].partner2.wallet];
         delete addressToWedding[weddings[_weddingId].thirdParty];
@@ -179,9 +261,13 @@ contract WeddingManager is Ownable {
     }
 
     //aditional (?)
-    function checkIfPersonIsMarried(address _address) public view returns (bool) {
+    function checkIfPersonIsMarried(address _address)
+        public
+        view
+        returns (bool)
+    {
         bool result;
-        if(weddings[addressToWedding[_address]].status == 3){
+        if (weddings[addressToWedding[_address]].status == 3) {
             result = true;
         }
         return result;
