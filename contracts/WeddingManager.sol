@@ -133,13 +133,14 @@ contract WeddingManager is Ownable {
         if (weddings[weddingId].partner1.wallet == msg.sender) {
             weddings[weddingId].partner1.ringId = ringId;
             weddings[weddingId].partner1.tokeUri = _uri;
-        }
-        if (weddings[weddingId].partner2.wallet == msg.sender) {
-            weddings[weddingId].partner2.ringId = ringId;
-            weddings[weddingId].partner2.tokeUri = _uri;
+        } else {
+            // gas optimization
+            if (weddings[weddingId].partner2.wallet == msg.sender) {
+                weddings[weddingId].partner2.ringId = ringId;
+                weddings[weddingId].partner2.tokeUri = _uri;
+            }
         }
 
-        // does this get called after minting happens?
         emit RingCreated(msg.sender, ringId, _uri);
         if (
             weddings[weddingId].partner1.ringId != 0 &&
@@ -153,6 +154,7 @@ contract WeddingManager is Ownable {
         public
         isPartner(_weddingId, msg.sender)
     {
+        // TODO: refactor this to send both rings at once?
         require(
             weddings[_weddingId].status == 2,
             "Rings have not been created or wedding is completed."
@@ -167,18 +169,28 @@ contract WeddingManager is Ownable {
             ? weddings[_weddingId].partner2
             : weddings[_weddingId].partner1;
 
+        // check if we have a valid ringId
+        require(fromPartner.ringId != 0, "Invalid ringId");
+
+        // check if the ring has already been sent
+        require(fromPartner.sentRing == false, "Ring has already been sent");
+
         //transfer ring
         ringContract.transferFrom(
-            fromPartner.wallet,
+            address(this),
             toPartner.wallet,
             fromPartner.ringId
         );
-
-        fromPartner.sentRing = true;
         emit RingSent(fromPartner.wallet, toPartner.wallet, fromPartner.ringId);
+        fromPartner.sentRing = true;
 
         if (toPartner.sentRing) {
             weddings[_weddingId].status = 3;
+            // exchange ringID's
+            // TODO: try solidity swapping
+            uint256 tempId = fromPartner.ringId;
+            fromPartner.ringId = toPartner.ringId;
+            toPartner.ringId = tempId;
             emit WeddingComplete(_weddingId);
         }
     }
