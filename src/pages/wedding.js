@@ -8,7 +8,7 @@ const Wedding =() =>{
     const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
     const router = useRouter();
     const {id} = router.query;
-    const contractAddress ='0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+    const contractAddress ='0xbDB63a121dE60b4036b212856928e43b82378a06';
     const[wedingDetails, setWeddingDetails]= useState({partner1:{address:'',name:'',ringId:0,sentRing:false,tokeUri:''},partner2:{address:'',name:'',ringId:0,sentRing:false,tokenUri:''},thirdParty:'',balance:0,status:1});
     const[ring1, setRing1]= useState({image:'',metaData:''});
     const[ring2,setRing2] =useState({image:'',metaData:''});
