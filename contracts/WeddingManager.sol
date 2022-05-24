@@ -14,6 +14,14 @@ contract WeddingManager is Ownable {
     }
 
     // status : 1 = created; 2 = rings created; 3 = rings exchanged
+    // TODO: use this enum
+    enum WeddingStatus {
+        None,
+        Created,
+        Ready,
+        Completed
+    }
+
     struct Wedding {
         Partner partner1;
         Partner partner2;
@@ -34,9 +42,8 @@ contract WeddingManager is Ownable {
 
     constructor(address _weddingRingContract) {
         // option 1: create and deploy WeddingRing contract manually and set the address here
-        // ringContact = address(0xd9145CCE52D386f254917e481eB44e9943F39138);
-        // option 2: create and deploy WeddingRing contract here
         ringContract = WeddingRing(_weddingRingContract);
+        // option 2: create and deploy WeddingRing contract here
     }
 
     modifier isPartner(uint256 _weddingId, address _wallet) {
@@ -160,14 +167,19 @@ contract WeddingManager is Ownable {
             "Rings have not been created or wedding is completed."
         );
 
-        Partner storage fromPartner = weddings[_weddingId].partner1.wallet ==
-            msg.sender
-            ? weddings[_weddingId].partner1
-            : weddings[_weddingId].partner2;
-        Partner storage toPartner = weddings[_weddingId].partner2.wallet ==
-            msg.sender
-            ? weddings[_weddingId].partner2
-            : weddings[_weddingId].partner1;
+        Partner storage fromPartner;
+        Partner storage toPartner;
+
+        if (weddings[_weddingId].partner1.wallet == msg.sender) {
+            fromPartner = weddings[_weddingId].partner1;
+            toPartner = weddings[_weddingId].partner2;
+        } else {
+            fromPartner = weddings[_weddingId].partner2;
+            toPartner = weddings[_weddingId].partner1;
+        }
+
+        // make sure we are sending to the other partner
+        require(toPartner.wallet != msg.sender, "Sending ring to self");
 
         // check if we have a valid ringId
         require(fromPartner.ringId != 0, "Invalid ringId");
@@ -184,9 +196,9 @@ contract WeddingManager is Ownable {
         emit RingSent(fromPartner.wallet, toPartner.wallet, fromPartner.ringId);
         fromPartner.sentRing = true;
 
-        if (toPartner.sentRing) {
+        if (fromPartner.sentRing && toPartner.sentRing) {
             weddings[_weddingId].status = 3;
-            // exchange ringID's
+            // update ringID's
             // TODO: try solidity swapping
             uint256 tempId = fromPartner.ringId;
             fromPartner.ringId = toPartner.ringId;
@@ -233,6 +245,7 @@ contract WeddingManager is Ownable {
         );
     }
 
+    // TODO: not necessary. we can use the getter
     function getWeddingById(uint256 _weddingId)
         external
         view

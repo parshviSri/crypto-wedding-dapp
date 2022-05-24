@@ -18,14 +18,14 @@ async function main() {
   const weddingRing = await WeddingRing.deploy();
   const ringContractAddress = await weddingRing.address
   await weddingRing.deployed();
-  console.log("Ring Contract is deployed to:",weddingRing.address);
+  console.log("WeddingRing Contract  deployed to:",weddingRing.address);
   
    const WeddingManager = await ethers.getContractFactory("WeddingManager");
    const weddingManager = await WeddingManager.deploy(ringContractAddress);
 
    await weddingManager.deployed();
 
-   console.log("Greeter deployed to:", weddingManager.address);
+   console.log("WeddingManager contract deployed to:", weddingManager.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
