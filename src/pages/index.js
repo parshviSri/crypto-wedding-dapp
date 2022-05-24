@@ -1,11 +1,51 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import { ethers } from 'ethers';
+import WeddingContract from '../../artifacts/contracts/WeddingManager.sol/WeddingManager.json';
 import styles from '../styles/Home.module.css';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 import {useRouter} from 'next/router';
+import React, { useState, useEffect } from 'react';
+
+
 
 export default function Home() {
+  
+  
+  useEffect(()=>{
+    fetchWedding();
+  });
+
+  const fetchWedding = async () =>{
+    try{
+        const currentAccount = await window.ethereum.request({method:'eth_accounts'});
+        //setAccount(currentAccount);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contractAddress ='0xe7f1725e7734ce288f8367e1bb143e90bb3f0512';
+        const weddingManager = new ethers.Contract(contractAddress, WeddingContract.abi,signer);
+        const weddingId = await weddingManager.getWeddingIdByAccount();
+        const weddingStatus = await weddingManager.getWeddingStatus(weddingId.toNumber());
+        console.log(weddingId.toNumber());
+
+        if (weddingStatus.toNumber() == 0)
+          router.push('/register')
+        if (weddingStatus.toNumber() == 1)
+          router.push('/createRings?id=' + weddingId.toNumber())
+        if (weddingStatus.toNumber() == 2)
+          router.push('/exchangeRings?id=' + weddingId.toNumber())
+        if (weddingStatus.toNumber() == 3)
+        router.push('/finishedWedding?id=' + weddingId.toNumber())
+
+        
+
+    }
+    catch(err){
+        //console.log(err)
+    }
+}
+  
   const router = useRouter();
   return (
     <div className={styles.container}>

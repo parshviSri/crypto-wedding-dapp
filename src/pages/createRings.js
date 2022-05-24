@@ -8,7 +8,7 @@ const Wedding =() =>{
     const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
     const router = useRouter();
     const {id} = router.query;
-    const contractAddress ='0xbDB63a121dE60b4036b212856928e43b82378a06';
+    const contractAddress ='0xe7f1725e7734ce288f8367e1bb143e90bb3f0512';
     const[wedingDetails, setWeddingDetails]= useState({partner1:{address:'',name:'',ringId:0,sentRing:false,tokeUri:''},partner2:{address:'',name:'',ringId:0,sentRing:false,tokenUri:''},thirdParty:'',balance:0,status:1});
     const[ring1, setRing1]= useState({image:'',metaData:''});
     const[ring2,setRing2] =useState({image:'',metaData:''});
@@ -27,7 +27,7 @@ const Wedding =() =>{
                 const signer = provider.getSigner();
                 const weddingManager = new ethers.Contract(contractAddress, WeddingContract.abi,signer);
                 const wedding = await weddingManager.getWeddingById(id);
-                    setWeddingDetails({partner1:{
+                setWeddingDetails({partner1:{
                     address:wedding.partner1.wallet,
                     name:wedding.partner1.name,
                     ringId:wedding.partner1.ringId.toNumber(),
@@ -225,14 +225,6 @@ const Wedding =() =>{
                 <p>{eventMessage}</p>
             <img src={ring1.image} width="120" height="120" />
             <p>Vows</p>
-            </div>
-            <div>
-            {wedingDetails.status==2 && <button onClick={sendRing}>Start The wedding</button>}
-            {wedingDetails.status==3 && <div>
-                <p>Congratulation !!</p>
-                <p>{wedingDetails.partner1.name} and {wedingDetails.partner2.name} are married !!</p>
-                </div>}
-
             </div>
             <div>
             <img src={ring2.image} width="120" height="120" />

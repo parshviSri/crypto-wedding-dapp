@@ -246,6 +246,10 @@ contract WeddingManager is Ownable {
     }
 
     // TODO: not necessary. we can use the getter
+    function getWeddingIdByAccount() external view returns (uint){
+        return addressToWedding[msg.sender];
+    }
+
     function getWeddingById(uint256 _weddingId)
         external
         view
@@ -266,7 +270,6 @@ contract WeddingManager is Ownable {
     function getWeddingStatus(uint256 _weddingId)
         public
         view
-        weddingIdExists(_weddingId)
         returns (uint256)
     {
         return weddings[_weddingId].status;
