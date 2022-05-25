@@ -8,7 +8,7 @@ const Wedding =() =>{
     const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
     const router = useRouter();
     const {id} = router.query;
-    const contractAddress ='0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+    const contractAddress ='0xbDB63a121dE60b4036b212856928e43b82378a06';
     const[wedingDetails, setWeddingDetails]= useState({partner1:{address:'',name:'',ringId:0,sentRing:false,tokeUri:''},partner2:{address:'',name:'',ringId:0,sentRing:false,tokenUri:''},thirdParty:'',balance:0,status:1});
     const[ring1, setRing1]= useState({image:'',metaData:''});
     const[ring2,setRing2] =useState({image:'',metaData:''});
@@ -76,7 +76,7 @@ const Wedding =() =>{
                   const url = `https://ipfs.infura.io/ipfs/${added.path}`;
                   console.log(url);
                     if(account.toString().toUpperCase() == wedingDetails.partner1.address.toUpperCase() ){
-                      const metadata= await uploadToIPFS(wedingDetails.partnerName1, wedingDetails.partnerName2,id,url);
+                      const metadata= await uploadToIPFS(wedingDetails.partner1.name, wedingDetails.partner2.name,id,url);
                       settokenUri(metadata)
                       const getmetaData = await axios.get(metadata);
                       
@@ -84,7 +84,7 @@ const Wedding =() =>{
       
                     }
                     if(account.toString().toUpperCase() == wedingDetails.partner2.address.toUpperCase()){
-                      const metadata= await uploadToIPFS(wedingDetails.partnerName2, wedingDetails.partnerName1,id,url);
+                      const metadata= await uploadToIPFS(wedingDetails.partner2.name, wedingDetails.partner1.name,id,url);
                       settokenUri(metadata)
 
                       const getmetaData = await axios.get(metadata);
@@ -100,9 +100,11 @@ const Wedding =() =>{
     }
     async function uploadToIPFS(from,to,tokenId,image) {
         /* first, upload metadata to IPFS */
-        let description = "This NFT is the symbol of commitment from" +from +"to" +to+" to be in a matrimonial."
+        let description = "This NFT is the symbol of commitment from" +from +"to" +to+" to be in a matrimonial.";
+        let name ="Wedding Id - "+tokenId;
+        let attributes =[{to:to,from:from}]
         const data = JSON.stringify({
-          to,from,id:tokenId, description, image
+          name, description, image,attributes
         })
         try {
           const added = await client.add(data)
@@ -188,7 +190,7 @@ const Wedding =() =>{
                 </div>}
             {account.toString().toUpperCase() == wedingDetails.partner2.address.toUpperCase()&&<div>
                 {wedingDetails.partner2.sentRing  ||
-
+ 
 <div className='flex flex-row'>
 <div className='basis-1/2 bg-black'>
    <div className='m-6 flex items-center justify-center'>
