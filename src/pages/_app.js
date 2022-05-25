@@ -7,7 +7,10 @@ function MyApp({ Component, pageProps }) {
   const[con , setCon] = useState(false);
   const [user, setUser] = useState('')
   useEffect(()=>{
-    connectWallet();
+    setInterval(()=>{
+      connectWallet();
+
+    },1000)
   },[])
   const connectWallet = async() =>{
     

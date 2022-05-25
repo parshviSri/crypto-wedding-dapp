@@ -3,7 +3,8 @@
  import { ethers } from 'ethers';
  import Wedding from '../../artifacts/contracts/WeddingManager.sol/WeddingManager.json';
  import {useRouter} from 'next/router';
-
+ import { ToastContainer, toast } from 'react-toastify';
+ import 'react-toastify/dist/ReactToastify.css';
  const Register =() =>{
     const router = useRouter();
 
@@ -13,9 +14,16 @@
     const createWedding = async() =>{
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
+        toast("Please wait your wedding is being created!!",{position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,})
         const weddingManager = new ethers.Contract(contractAddress, Wedding.abi,signer);
         const transaction= await weddingManager.createWedding(formInput.partner1,formInput.partner2, formInput.parterName1,formInput.partnerName2);
-        await transaction.wait()
+        await transaction.wait();
         const event = await weddingManager.on("WeddingCreated",(tokenId)=>{
             console.log(tokenId.toNumber());
             setTokenId(tokenId.toNumber());
@@ -26,6 +34,17 @@
     }
     return(
         <div>
+        <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        />
         <div className='text-center'>
         <h2 className="font-medium leading-tight text-2xl mt-0 mb-2">Welcome</h2>
         <p> Get Started with your crypto wedding</p>

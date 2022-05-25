@@ -4,6 +4,8 @@ import WeddingContract from '../../artifacts/contracts/WeddingManager.sol/Weddin
 import { ethers } from 'ethers';
 import {create as ipfsHttpClient} from 'ipfs-http-client';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Wedding =() =>{
     const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
     const router = useRouter();
@@ -14,8 +16,9 @@ const Wedding =() =>{
     const[ring2,setRing2] =useState({image:'',metaData:''});
     const[tokenUri,settokenUri] = useState('');
     const[account,setAccount] = useState('');
-    const [eventMessage,setEventMessage]= useState('');
     const giftEth=1 ^10-2;
+    const dummyImg ='/img1.jpg';
+    const openSea='https://testnets.opensea.io/assets/rinkeby/0x3771525B52D81348861520B07175083bA8551B65/'
     useEffect(()=>{
         fetchWedding();
     },[id]);
@@ -123,6 +126,13 @@ const Wedding =() =>{
             const weddingManager = new ethers.Contract(contractAddress, WeddingContract.abi,signer);
             const weddingRing = await weddingManager.createRing(tokenUri);
             console.log(weddingRing);
+            toast("Please wait your ring is being minted!!",{position: "top-center",
+                autoClose: 15000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,})
             const event = await weddingManager.on("RingCreated",(address, ringId, uri)=>{
                 console.log(address);
                 console.log(ringId);
@@ -140,7 +150,15 @@ const Wedding =() =>{
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const weddingManager = new ethers.Contract(contractAddress, WeddingContract.abi,signer);
+        
         const wedding = await weddingManager.sendRing(id);
+        toast("Please wait your ring is being exchanged!!",{position: "top-center",
+                autoClose:6000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,})
         const event = await weddingManager.on("RingSent",(to, from,ringId)=>{
           setEventMessage("The ring is transferred to-",to)  
         })
@@ -154,67 +172,82 @@ const Wedding =() =>{
       }
     return (
         <div>
-            <div className='bg-gray-100'>
-                <div className='text-center'>
-
-            <h2 className="font-medium leading-tight text-2xl mt-0 mb-2">Welcome to wedding page of {wedingDetails.partner1.name} and {wedingDetails.partner2.name}</h2>
-        <p> Get Started with your crypto wedding</p>
-        {wedingDetails.status ==1 && 
-        <div>
-            {account.toString().toUpperCase() == wedingDetails.partner1.address.toUpperCase()&&<div>
-                {wedingDetails.partner1.sentRing||
-        <div className='flex flex-row'>
-        <div className='basis-1/2 bg-black'>
-            <div className='m-6 flex items-center justify-center'>
-                <div className='bg-gray-100 p-6'>
-                <img src={ring1.image} width="120" height="120" />
-
+          <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        />
+           <div className='text-center'>
+                  <h1>Find Your Wedding</h1>
+                  <input type="number" onChange={(event)=>{router.push( {pathname: '/wedding', query: { id:event.target.value} })}} />
                 </div>
-                <input type="file" onChange={addImageRing}/>
+            <div className='bg-gray-100'>
+           
+              {wedingDetails.partner1.name &&  <div className='text-center'>
+                  <h2 className="font-medium leading-tight text-2xl mt-0 mb-2">Welcome to wedding page of {wedingDetails.partner1.name} and {wedingDetails.partner2.name}</h2>
+                  {wedingDetails.status<3 &&<p> Get Started with your crypto wedding</p>}
+                  {wedingDetails.status ==1 && 
+                     <div>
+                          {account.toString().toUpperCase() == wedingDetails.partner1.address.toUpperCase()&&<div>
+                          {wedingDetails.partner1.sentRing||
+                            <div className='flex flex-row'>
+                            <div className='basis-1/2 bg-black'>
+                                <div className='m-6 flex items-center justify-center'>
+                                    <div className='bg-gray-100 p-6'>
+                                    <img src={ring1.image||dummyImg} width="120" height="120" />
 
+                                    </div>
+                                    <input type="file" onChange={addImageRing}/>
+
+                                
+                                </div>
             
-            </div>
-            
-        </div>
-        <div className='basis-1/2 text-center'>
-            <p>Your digital ring</p>
-            <p>You can create your own ring by uploading any image of your choice and we will mint it as an NFT which will remain on block chain forever </p>
-            <div className='m-6 flex items-center justify-center'>
-        <button className='bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' onClick={()=>{mintRing(tokenUri)}}> Mint Your Ring</button>
+                            </div>
+                            <div className='basis-1/2 text-center'>
+                              <p>Your digital ring</p>
+                              <p>You can create your own ring by uploading any image of your choice and we will mint it as an NFT which will remain on block chain forever </p>
+                              <div className='m-6 flex items-center justify-center'>
+                                <button className='bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' onClick={()=>{mintRing(tokenUri)}}> Mint Your Ring</button>
 
-    </div>
-        </div>
+                              </div>
+                              </div>
 
-    </div>
-        }
-                </div>}
-            {account.toString().toUpperCase() == wedingDetails.partner2.address.toUpperCase()&&<div>
+                             </div>
+                               }
+                          </div>}
+                            {account.toString().toUpperCase() == wedingDetails.partner2.address.toUpperCase()&&<div>
                 {wedingDetails.partner2.sentRing  ||
  
-<div className='flex flex-row'>
-<div className='basis-1/2 bg-black'>
-   <div className='m-6 flex items-center justify-center'>
-       <div className='bg-gray-100 p-6'>
-       <img src={ring2.image} width="120" height="120" />
+                <div className='flex flex-row'>
+                <div className='basis-1/2 bg-black'>
+                  <div className='m-6 flex items-center justify-center'>
+                      <div className='bg-gray-100 p-6'>
+                      <img src={ring2.image||dummyImg} width="120" height="120" />
 
-       </div>
-       <input type="file" onChange={addImageRing}/>
+                      </div>
+                      <input type="file" onChange={addImageRing}/>
 
-   
-   </div>
-   
-</div>
-<div className='basis-1/2 text-center'>
-   <p>Your digital ring</p>
-   <p>You can create your own ring by uploading any image of your choice and we will mint it as an NFT which will remain on block chain forever </p>
-   <div className='m-6 flex items-center justify-center'>
-<button className='bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' onClick={()=>{mintRing(tokenUri)}}> Mint Your Ring</button>
+                  
+                  </div>
+                  
+                </div>
+              <div className='basis-1/2 text-center'>
+                <p>Your digital ring</p>
+                <p>You can create your own ring by uploading any image of your choice and we will mint it as an NFT which will remain on block chain forever </p>
+                <div className='m-6 flex items-center justify-center'>
+              <button className='bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' onClick={()=>{mintRing(tokenUri)}}> Mint Your Ring</button>
 
-</div>
-</div>
+              </div>
+              </div>
 
-</div>
-}
+                </div>
+              }
             </div>}
              {wedingDetails.partner1.sentRing && <div>{wedingDetails.partner1.name} has already created the ring!!</div>}
             
@@ -223,21 +256,20 @@ const Wedding =() =>{
         
         
           <div className='flex flex-row'>
-            <div>
-                <p>{eventMessage}</p>
-            <img src={ring1.image} width="120" height="120" />
+            <div className='p-10'>
+            <a href={openSea+wedingDetails.partner2.ringId} target="_blank"> <img src={ring1.image ||dummyImg} width="320" height="320" /></a>
             <p>Vows</p>
             </div>
             <div>
-            {wedingDetails.status==2 && <button onClick={sendRing}>Start The wedding</button>}
-            {wedingDetails.status==3 && <div>
-                <p>Congratulation !!</p>
-                <p>{wedingDetails.partner1.name} and {wedingDetails.partner2.name} are married !!</p>
+            {wedingDetails.status==2 && <button className='bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline m-12' onClick={sendRing}>Exchange The Ring</button>}
+            {wedingDetails.status==3 && <div className='mt-12'>
+                <p className="font-medium leading-tight text-2xl mt-0 mb-2">Congratulation !!</p>
+                <p className="font-medium leading-tight text-2xl mt-0 mb-2">{wedingDetails.partner1.name} and {wedingDetails.partner2.name} are married !!</p>
                 </div>}
 
             </div>
-            <div>
-            <img src={ring2.image} width="120" height="120" />
+            <div className='p-10'>
+            <a href={openSea+wedingDetails.partner1.ringId} target="_blank"><img src={ring2.image ||dummyImg} width="320" height="320" /></a>
             <p>Vows</p> 
             </div>
             
@@ -250,7 +282,10 @@ const Wedding =() =>{
             <button className='bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' onClick={sendGifts}> Send Your Gifts </button>
 
         </div>        </div>
-                </div>
+                </div>}
+               {id>0 && wedingDetails.partner1.name || <div className='text-center'>
+                 <h1>No Wedding with this id is present !!</h1>
+                 </div>} 
             </div>
         </div>
     )
