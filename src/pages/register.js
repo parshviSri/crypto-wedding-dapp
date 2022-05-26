@@ -3,46 +3,54 @@ import { ethers } from "ethers";
 import Wedding from "../../artifacts/contracts/WeddingManager.sol/WeddingManager.json";
 import { useRouter } from "next/router";
 
-const Register = () => {
-  const router = useRouter();
+ import {useState} from 'react';
+ import { ethers } from 'ethers';
+ import Wedding from '../../artifacts/contracts/WeddingManager.sol/WeddingManager.json';
+ import {useRouter} from 'next/router';
+ import { ToastContainer, toast } from 'react-toastify';
+ import 'react-toastify/dist/ReactToastify.css';
+ const Register =() =>{
+    const router = useRouter();
 
-  const [formInput, updateFormInput] = useState({
-    parterName1: "",
-    partnerName2: "",
-    partner1: "",
-    partner2: "",
-  });
-  const [tokenId, setTokenId] = useState(null);
-  const contractAddress = "0xbDB63a121dE60b4036b212856928e43b82378a06"; // contract deployed on rinkeby
-  const createWedding = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const weddingManager = new ethers.Contract(
-      contractAddress,
-      Wedding.abi,
-      signer
-    );
-    const transaction = await weddingManager.createWedding(
-      formInput.partner1,
-      formInput.partner2,
-      formInput.parterName1,
-      formInput.partnerName2
-    );
-    await transaction.wait();
-    const event = await weddingManager.on("WeddingCreated", (tokenId) => {
-      console.log(tokenId.toNumber());
-      setTokenId(tokenId.toNumber());
-      router.push({ pathname: "/wedding", query: { id: tokenId.toNumber() } });
-    });
-    console.log(tokenId);
-    console.log(event);
-  };
-  return (
-    <div>
-      <div className="text-center">
-        <h2 className="font-medium leading-tight text-2xl mt-0 mb-2">
-          Welcome
-        </h2>
+    const[formInput, updateFormInput] = useState({parterName1:'',partnerName2:'',partner1:'',partner2:''});
+    const[tokenId, setTokenId] = useState(null);
+    const contractAddress ='0xbDB63a121dE60b4036b212856928e43b82378a06';
+    const createWedding = async() =>{
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        toast("Please wait your wedding is being created!!",{position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,})
+        const weddingManager = new ethers.Contract(contractAddress, Wedding.abi,signer);
+        const transaction= await weddingManager.createWedding(formInput.partner1,formInput.partner2, formInput.parterName1,formInput.partnerName2);
+        await transaction.wait();
+        const event = await weddingManager.on("WeddingCreated",(tokenId)=>{
+            console.log(tokenId.toNumber());
+            setTokenId(tokenId.toNumber());
+            router.push( {pathname: '/wedding', query: { id:tokenId.toNumber() } })
+        });
+        console.log(tokenId)
+        console.log(event);
+    }
+    return(
+        <div className="bg-[url('/background3.jpeg')]">
+        <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        />
+        <div className='text-center'>
+        <h2 className="font-medium leading-tight text-2xl mt-0 mb-2">Welcome</h2>
         <p> Get Started with your crypto wedding</p>
       </div>
       <div className="flex flex-row m-24 justify-center">
