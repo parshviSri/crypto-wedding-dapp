@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import WeddingContract from "../../artifacts/contracts/WeddingManager.sol/WeddingManager.json";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -11,13 +11,13 @@ const Wedding = () => {
   const router = useRouter();
   const { id } = router.query;
   const contractAddress = "0xbDB63a121dE60b4036b212856928e43b82378a06";
-  const [wedingDetails, setWeddingDetails] = useState({
+  const [weddingDetails, setWeddingDetails] = useState({
     partner1: {
       address: "",
       name: "",
       ringId: 0,
       sentRing: false,
-      tokeUri: "",
+      tokenUri: "",
     },
     partner2: {
       address: "",
@@ -27,14 +27,17 @@ const Wedding = () => {
       tokenUri: "",
     },
     thirdParty: "",
-    balance: 0,
+    balance: BigNumber.from(0),
     status: 1,
   });
   const [ring1, setRing1] = useState({ image: "", metaData: "" });
   const [ring2, setRing2] = useState({ image: "", metaData: "" });
+  const [formInput, updateFormInput] = useState({ giftAmount: "0" });
+  const [withdrawFormInput, updateWithdrawFormInput] = useState({
+    withdrawAmount: "0",
+  });
   const [tokenUri, settokenUri] = useState("");
   const [account, setAccount] = useState("");
-  const giftEth = 1 ^ (10 - 2);
   const dummyImg = "/img1.jpg";
   const openSea =
     "https://testnets.opensea.io/assets/rinkeby/0x3771525B52D81348861520B07175083bA8551B65/";
@@ -71,24 +74,24 @@ const Wedding = () => {
           tokenUri: wedding.partner2.tokenUri,
         },
         thirdParty: wedding.thirdParty,
-        balance: wedding.balance.toNumber(),
+        balance: wedding.balance,
         status: wedding.status.toNumber(),
       });
       console.log(wedding);
-      const getmetaData1 = await axios.get(wedding.partner1.tokeUri);
+      const getmetaData1 = await axios.get(wedding.partner1.tokenUri);
       setRing1({
         image: getmetaData1.data.image,
         metadata: getmetaData1.data.description,
       });
-      const getmetaData2 = await axios.get(wedding.partner2.tokeUri);
+      const getmetaData2 = await axios.get(wedding.partner2.tokenUri);
       setRing2({
         image: getmetaData2.data.image,
         metadata: getmetaData2.data.description,
       });
       console.log(
-        wedingDetails.partner2.sentRing &&
+        weddingDetails.partner2.sentRing &&
           account.toString().toUpperCase() ==
-            wedingDetails.partner2.address.toUpperCase()
+            weddingDetails.partner2.address.toUpperCase()
       );
     } catch (err) {}
   };
@@ -98,9 +101,9 @@ const Wedding = () => {
     try {
       if (
         account.toString().toUpperCase() ==
-          wedingDetails.partner1.address.toUpperCase() ||
+          weddingDetails.partner1.address.toUpperCase() ||
         account.toString().toUpperCase() ==
-          wedingDetails.partner2.address.toUpperCase()
+          weddingDetails.partner2.address.toUpperCase()
       ) {
         const added = await client.add(file, {
           progress: (prog) => console.log(`received: ${prog}`),
@@ -109,11 +112,11 @@ const Wedding = () => {
         console.log(url);
         if (
           account.toString().toUpperCase() ==
-          wedingDetails.partner1.address.toUpperCase()
+          weddingDetails.partner1.address.toUpperCase()
         ) {
           const metadata = await uploadToIPFS(
-            wedingDetails.partner1.name,
-            wedingDetails.partner2.name,
+            weddingDetails.partner1.name,
+            weddingDetails.partner2.name,
             id,
             url
           );
@@ -127,11 +130,11 @@ const Wedding = () => {
         }
         if (
           account.toString().toUpperCase() ==
-          wedingDetails.partner2.address.toUpperCase()
+          weddingDetails.partner2.address.toUpperCase()
         ) {
           const metadata = await uploadToIPFS(
-            wedingDetails.partner2.name,
-            wedingDetails.partner1.name,
+            weddingDetails.partner2.name,
+            weddingDetails.partner1.name,
             id,
             url
           );
@@ -207,7 +210,7 @@ const Wedding = () => {
     } catch (err) {}
   };
   const sendRing = async () => {
-    console.log(wedingDetails);
+    console.log(weddingDetails);
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -228,9 +231,10 @@ const Wedding = () => {
       progress: undefined,
     });
     const event = await weddingManager.on("RingSent", (to, from, ringId) => {
-      setEventMessage("The ring is transferred to-", to);
+      setEventMessage("The ring is transferred to - ", to);
     });
   };
+
   const sendGifts = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -239,8 +243,26 @@ const Wedding = () => {
       WeddingContract.abi,
       signer
     );
-    const wedding = await weddingManager.sendEther({ value: giftEth });
+    const overrides = {
+      value: ethers.utils.parseUnits(formInput.giftAmount, "gwei"),
+    };
+    const wedding = await weddingManager.sendEther(id, overrides);
   };
+
+  const withdrawBalance = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const weddingManager = new ethers.Contract(
+      contractAddress,
+      WeddingContract.abi,
+      signer
+    );
+    const wedding = await weddingManager.withdrawEther(
+      id,
+      BigNumber.from(withdrawFormInput.withdrawAmount)
+    );
+  };
+
   return (
     <div className="bg-[url('/background3.jpeg')]">
       <ToastContainer
@@ -267,21 +289,21 @@ const Wedding = () => {
         />
       </div>
       <div>
-        {wedingDetails.partner1.name && (
+        {weddingDetails.partner1.name && (
           <div className="text-center">
             <h2 className="font-medium leading-tight text-2xl mt-0 mb-2">
-              Welcome to wedding page of {wedingDetails.partner1.name} and{" "}
-              {wedingDetails.partner2.name}
+              Welcome to wedding page of {weddingDetails.partner1.name} and{" "}
+              {weddingDetails.partner2.name}
             </h2>
-            {wedingDetails.status < 3 && (
+            {weddingDetails.status < 3 && (
               <p> Get Started with your crypto wedding</p>
             )}
-            {wedingDetails.status == 1 && (
+            {weddingDetails.status == 1 && (
               <div>
                 {account.toString().toUpperCase() ==
-                  wedingDetails.partner1.address.toUpperCase() && (
+                  weddingDetails.partner1.address.toUpperCase() && (
                   <div>
-                    {wedingDetails.partner1.sentRing || (
+                    {weddingDetails.partner1.sentRing || (
                       <div className="flex flex-row">
                         <div className="basis-1/2 bg-black">
                           <div className="m-6 flex items-center justify-center">
@@ -319,9 +341,9 @@ const Wedding = () => {
                   </div>
                 )}
                 {account.toString().toUpperCase() ==
-                  wedingDetails.partner2.address.toUpperCase() && (
+                  weddingDetails.partner2.address.toUpperCase() && (
                   <div>
-                    {wedingDetails.partner2.sentRing || (
+                    {weddingDetails.partner2.sentRing || (
                       <div className="flex flex-row">
                         <div className="basis-1/2 bg-black">
                           <div className="m-6 flex items-center justify-center">
@@ -358,9 +380,10 @@ const Wedding = () => {
                     )}
                   </div>
                 )}
-                {wedingDetails.partner1.sentRing && (
+                {weddingDetails.partner1.sentRing && (
                   <div>
-                    {wedingDetails.partner1.name} has already created the ring!!
+                    {weddingDetails.partner1.name} has already created the
+                    ring!!
                   </div>
                 )}
               </div>
@@ -369,7 +392,7 @@ const Wedding = () => {
             <div className="flex flex-row">
               <div className="p-10">
                 <a
-                  href={openSea + wedingDetails.partner2.ringId}
+                  href={openSea + weddingDetails.partner2.ringId}
                   target="_blank"
                 >
                   {" "}
@@ -378,7 +401,7 @@ const Wedding = () => {
                 <p>Vows</p>
               </div>
               <div>
-                {wedingDetails.status == 2 && (
+                {weddingDetails.status == 2 && (
                   <button
                     className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline m-12"
                     onClick={sendRing}
@@ -386,21 +409,21 @@ const Wedding = () => {
                     Exchange The Ring
                   </button>
                 )}
-                {wedingDetails.status == 3 && (
+                {weddingDetails.status == 3 && (
                   <div className="mt-12">
                     <p className="font-medium leading-tight text-2xl mt-0 mb-2">
                       Congratulation !!
                     </p>
                     <p className="font-medium leading-tight text-2xl mt-0 mb-2">
-                      {wedingDetails.partner1.name} and{" "}
-                      {wedingDetails.partner2.name} are married !!
+                      {weddingDetails.partner1.name} and{" "}
+                      {weddingDetails.partner2.name} are married !!
                     </p>
                   </div>
                 )}
               </div>
               <div className="p-10">
                 <a
-                  href={openSea + wedingDetails.partner1.ringId}
+                  href={openSea + weddingDetails.partner1.ringId}
                   target="_blank"
                 >
                   <img src={ring2.image || dummyImg} width="320" height="320" />
@@ -412,22 +435,93 @@ const Wedding = () => {
             <div className="flex flex-row">
               <p>
                 {" "}
-                Want to send gifts to {wedingDetails.partnerName1} and{" "}
-                {wedingDetails.partnerName2}
+                Want to send a wedding gifts to {
+                  weddingDetails.partnerName1
+                }{" "}
+                and
+                {weddingDetails.partnerName2}?
               </p>
               <div className="m-6 flex items-center justify-center">
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  placeholder="gift amount in gwei"
+                  onChange={(e) =>
+                    updateFormInput({
+                      ...formInput,
+                      giftAmount: e.target.value,
+                    })
+                  }
+                />
                 <button
                   className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   onClick={sendGifts}
                 >
                   {" "}
-                  Send Your Gifts{" "}
+                  Send Gift{" "}
                 </button>
-              </div>{" "}
+                <button
+                  className="bg-gray-600 hover:bg-gray-400 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline"
+                  onClick={(e) =>
+                    updateFormInput({
+                      ...formInput,
+                      giftAmount: "1000",
+                    })
+                  }
+                >
+                  1 Szabo
+                </button>
+                <button
+                  className="bg-gray-600 hover:bg-gray-400 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline"
+                  onClick={(e) =>
+                    updateFormInput({
+                      ...formInput,
+                      giftAmount: "1000000",
+                    })
+                  }
+                >
+                  1 Finney
+                </button>
+                <button
+                  className="bg-gray-600 hover:bg-gray-400 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline"
+                  onClick={(e) =>
+                    updateFormInput({
+                      ...formInput,
+                      giftAmount: "1000000000",
+                    })
+                  }
+                >
+                  1 Ether
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-row">
+              <div className="m-6 flex items-center justify-center">
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  placeholder="withdraw amount in gwei"
+                  onChange={(e) =>
+                    updateWithdrawFormInput({
+                      ...formInput,
+                      withdrawAmount: e.target.value,
+                    })
+                  }
+                />
+                <button
+                  className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  onClick={withdrawBalance}
+                >
+                  Withdraw Balance
+                </button>
+                <span>
+                  Current balance :
+                  {ethers.utils.formatUnits(weddingDetails.balance, "gwei")}
+                  gwei
+                </span>
+              </div>
             </div>
           </div>
         )}
-        {(id > 0 && wedingDetails.partner1.name) || (
+        {(id > 0 && weddingDetails.partner1.name) || (
           <div className="text-center">
             <h1>No Wedding with this id is present !!</h1>
           </div>
