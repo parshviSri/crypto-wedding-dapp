@@ -60,7 +60,7 @@ function MyApp({ Component, pageProps }) {
     </nav>
     
     {con || <p className='text-2xl font-bold text-blue-800 text-center my-6'>Do not have Meta Mask install from  <a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en" className='text-pink-500'>here</a></p>}
-    {con && <Component {...pageProps} />}  </div>
+    {con && <Component {...pageProps}  className="bg-[url('/background3.jpeg')]"/>}  </div>
   )
 }
 

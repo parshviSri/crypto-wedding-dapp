@@ -126,14 +126,15 @@ const Wedding =() =>{
             const weddingManager = new ethers.Contract(contractAddress, WeddingContract.abi,signer);
             const weddingRing = await weddingManager.createRing(tokenUri);
             console.log(weddingRing);
-            toast("Please wait your ring is being minted!!",{position: "top-center",
-                autoClose: 15000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,})
+           
             const event = await weddingManager.on("RingCreated",(address, ringId, uri)=>{
+              toast("Please wait your ring is being minted!!",{position: "top-center",
+              autoClose: 15000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,})
                 console.log(address);
                 console.log(ringId);
                 console.log(uri);
@@ -171,7 +172,7 @@ const Wedding =() =>{
         const wedding = await weddingManager.sendEther({ value: giftEth });
       }
     return (
-        <div>
+        <div className="bg-[url('/background3.jpeg')]"  >
           <ToastContainer
         position="top-center"
         autoClose={5000}
@@ -187,7 +188,7 @@ const Wedding =() =>{
                   <h1>Find Your Wedding</h1>
                   <input type="number" onChange={(event)=>{router.push( {pathname: '/wedding', query: { id:event.target.value} })}} />
                 </div>
-            <div className='bg-gray-100'>
+            <div>
            
               {wedingDetails.partner1.name &&  <div className='text-center'>
                   <h2 className="font-medium leading-tight text-2xl mt-0 mb-2">Welcome to wedding page of {wedingDetails.partner1.name} and {wedingDetails.partner2.name}</h2>
@@ -227,7 +228,7 @@ const Wedding =() =>{
                 <div className='flex flex-row'>
                 <div className='basis-1/2 bg-black'>
                   <div className='m-6 flex items-center justify-center'>
-                      <div className='bg-gray-100 p-6'>
+                      <div className='p-6'>
                       <img src={ring2.image||dummyImg} width="120" height="120" />
 
                       </div>

@@ -4,19 +4,20 @@ import styles from '../styles/Home.module.css';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 import {useRouter} from 'next/router';
+import ViewWedding from './viewWedding';
 
 export default function Home() {
   const router = useRouter();
   return (
-    <div className={styles.container}>
+    <div className="bg-[url('/background3.jpeg')]">
       <Head>
         <title>Crypto Wedding</title>
         <meta name="description" content="Get Married on Block Chain" />
         <link rel="icon" href="/Crypto.png" />
       </Head>
 
-      <main>
-      <div className='bg-gray-100'>
+      <main className="bg-[url('/background3.jpeg')]">
+      <div>
         <div className='flex flex-row'>
           <div className='basis-3/4 p-6 content-center m-10'>
             <h1 className='text-4xl font-bold'>Get married on the BlockChain !!</h1>
@@ -53,6 +54,8 @@ export default function Home() {
           
         </div>
       </div>
+      <ViewWedding/>
+    
       <div className='flex flex-col'>
         <div className='m-6 flex items-center justify-center'>
         <button className='bg-black hover:bg-gray-200 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline' onClick={()=>{router.push('/register')}}> Get Started</button>
@@ -64,6 +67,7 @@ export default function Home() {
         </div>
 
           </div>
+
       </main>
 
       <footer className={styles.footer}>

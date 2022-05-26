@@ -33,7 +33,7 @@
         console.log(event);
     }
     return(
-        <div>
+        <div className="bg-[url('/background3.jpeg')]">
         <ToastContainer
         position="top-center"
         autoClose={5000}
