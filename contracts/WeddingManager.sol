@@ -11,6 +11,7 @@ contract WeddingManager is Ownable {
         uint256 ringId;
         string tokeUri;
         bool sentRing;
+        bool hasAnnuled;
     }
 
     // status : 1 = created; 2 = rings created; 3 = rings exchanged
@@ -93,14 +94,14 @@ contract WeddingManager is Ownable {
             _partner1Name,
             0,
             "",
-            false
+            false, false
         );
         Partner memory partner2 = Partner(
             _partner2Wallet,
             _partner2Name,
             0,
             "",
-            false
+            false, false
         );
 
         weddings[++counter] = Wedding(partner1, partner2, thirdParty, 0, 1);
@@ -275,17 +276,20 @@ contract WeddingManager is Ownable {
         return weddings[_weddingId].status;
     }
 
-    function annulMarriage(uint256 _weddingId)
-        external
-        isPartner(_weddingId, msg.sender)
-        weddingIdExists(_weddingId)
-    {
-        require(weddings[_weddingId].status == 3, "Wedding is not completed.");
+    function annulMarriage(uint256 _weddingId) external isPartner(_weddingId, msg.sender) weddingIdExists(_weddingId) {
+        require(weddings[_weddingId].status == 3, "Wedding is not complete.");
 
-        delete addressToWedding[weddings[_weddingId].partner1.wallet];
-        delete addressToWedding[weddings[_weddingId].partner2.wallet];
-        delete addressToWedding[weddings[_weddingId].thirdParty];
-        delete weddings[_weddingId];
+        if (weddings[_weddingId].partner1.wallet == msg.sender) {
+            weddings[_weddingId].partner1.hasAnnuled = true;
+        } else {
+            weddings[_weddingId].partner2.hasAnnuled = true;
+        }
+
+        if(weddings[_weddingId].partner1.hasAnnuled && weddings[_weddingId].partner2.hasAnnuled) {
+            delete addressToWedding[weddings[_weddingId].partner1.wallet];
+            delete addressToWedding[weddings[_weddingId].partner2.wallet];
+            delete weddings[_weddingId];
+        }
     }
 
     //aditional (?)
