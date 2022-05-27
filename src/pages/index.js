@@ -21,17 +21,17 @@ export default function Home() {
           <div className="flex flex-row">
             <div className="basis-3/4 p-6 content-center m-10">
               <h1 className="text-4xl font-bold">
-                Get married on the BlockChain !!
+                Get married on the Blockchain !!
               </h1>
               <p className="m-2 text=xl p-6 tracking-widest">
                 Marriage registration is a tedious and expensive process in the
-                physical world. We would like a way to register the wedding
-                between a couple digitally, maintain the sanctity of the
-                wedding, and celebrate the occasion. We propose to create a fun,
-                easy-to-use app that allows users to register their marriage on
-                the Blockchain (symbolically). This would also make it possible
-                for anyone (of any gender) to get (symbolically) married in any
-                country.
+                offline world. We want a way to register weddings using digital
+                technology, maintain the sanctity of the wedding, and celebrate
+                the occasion. Crypto Wedding allows us to do just that with an
+                easy-to-use app that lets you register your marriage on the
+                Ethereum Blockchain. Anyone can use this app, from anywhere in
+                the world. Note that this registration process would be symbolic
+                and has no legal binding(yet).
               </p>
             </div>
             <div className="basis-1/2 content-center">

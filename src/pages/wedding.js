@@ -6,6 +6,7 @@ import { create as ipfsHttpClient } from "ipfs-http-client";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const Wedding = () => {
   const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
   const router = useRouter();
@@ -41,6 +42,7 @@ const Wedding = () => {
   const dummyImg = "/img1.jpg";
   const openSea =
     "https://testnets.opensea.io/assets/rinkeby/0x3771525B52D81348861520B07175083bA8551B65/";
+
   useEffect(() => {
     fetchWedding();
   }, [id]);
@@ -155,11 +157,11 @@ const Wedding = () => {
   async function uploadToIPFS(from, to, tokenId, image) {
     /* first, upload metadata to IPFS */
     const description =
-      "This NFT is the symbol of commitment from" +
+      "This NFT is a symbol of commitment from " +
       from +
-      "to" +
+      " to" +
       to +
-      " to be in a matrimonial.";
+      " in blockchain matrimony.";
     const name = "Wedding Id - " + tokenId;
     const attributes = [{ to: to, from: from }];
     const data = JSON.stringify({
@@ -235,7 +237,7 @@ const Wedding = () => {
     });
   };
 
-  const sendGifts = async () => {
+  const sendGift = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const weddingManager = new ethers.Contract(
@@ -435,11 +437,8 @@ const Wedding = () => {
             <div className="flex flex-row">
               <p>
                 {" "}
-                Want to send a wedding gifts to {
-                  weddingDetails.partnerName1
-                }{" "}
-                and
-                {weddingDetails.partnerName2}?
+                Send a wedding gift to {weddingDetails.partnerName1} and{" "}
+                {weddingDetails.partnerName2}
               </p>
               <div className="m-6 flex items-center justify-center">
                 <input
@@ -454,7 +453,7 @@ const Wedding = () => {
                 />
                 <button
                   className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  onClick={sendGifts}
+                  onClick={sendGift}
                 >
                   {" "}
                   Send Gift{" "}
