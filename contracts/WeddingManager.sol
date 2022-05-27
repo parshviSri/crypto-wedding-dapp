@@ -26,7 +26,6 @@ contract WeddingManager is Ownable {
     struct Wedding {
         Partner partner1;
         Partner partner2;
-        address thirdParty;
         uint256 balance;
         uint256 status;
     }
@@ -85,10 +84,6 @@ contract WeddingManager is Ownable {
             "At least one of the partners is already married."
         );
 
-        address thirdParty;
-        if (msg.sender != _partner1Wallet && msg.sender != _partner2Wallet) {
-            thirdParty = msg.sender;
-        }
         Partner memory partner1 = Partner(
             _partner1Wallet,
             _partner1Name,
@@ -104,7 +99,7 @@ contract WeddingManager is Ownable {
             false, false
         );
 
-        weddings[++counter] = Wedding(partner1, partner2, thirdParty, 0, 1);
+        weddings[++counter] = Wedding(partner1, partner2, 0, 1);
         addressToWedding[_partner1Wallet] = counter;
         addressToWedding[_partner2Wallet] = counter;
         emit WeddingCreated(counter);
