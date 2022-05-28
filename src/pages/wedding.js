@@ -262,9 +262,11 @@ const Wedding = () => {
       WeddingContract.abi,
       signer
     );
+    let value = ethers.utils.parseUnits(withdrawFormInput.withdrawAmount, "ether");
+    console.log(value);
     const wedding = await weddingManager.withdrawEther(
       id,
-      BigNumber.from(withdrawFormInput.withdrawAmount)
+      value
     );
   };
 
@@ -501,10 +503,11 @@ const Wedding = () => {
             {(account.toString().toUpperCase() ==
                   weddingDetails.partner1.address.toUpperCase() ||  account.toString().toUpperCase() ==
                   weddingDetails.partner2.address.toUpperCase() )&&<div className="flex flex-row justify-center">
-                  <div className="m-6 flex items-center justify-center">
-                    <input
+                  <div>
+                    <input type="number"
+                    value={withdrawFormInput.withdrawAmount}
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      placeholder="withdraw amount in gwei"
+                      placeholder="withdraw amount in ether"
                       onChange={(e) =>
                         updateWithdrawFormInput({
                           ...formInput,
@@ -512,16 +515,20 @@ const Wedding = () => {
                         })
                       }
                     />
+                    </div>
+                    <div>
                     <button
                       className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                       onClick={withdrawBalance}
                     >
                       Withdraw Balance
                     </button>
+                    </div>
+                    <div>
                     <span>
-                      Current balance :
-                      {ethers.utils.formatUnits(weddingDetails.balance, "gwei")}
-                      gwei
+                      Current balance: &nbsp;
+                      {ethers.utils.formatUnits(weddingDetails.balance, "ether")}
+                      &nbsp; ether
                     </span>
                   </div>
                 </div>}
