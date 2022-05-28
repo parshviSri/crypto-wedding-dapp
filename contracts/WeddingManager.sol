@@ -200,6 +200,7 @@ contract WeddingManager is Ownable {
             fromPartner.ringId = toPartner.ringId;
             toPartner.ringId = tempId;
             emit WeddingComplete(_weddingId);
+            // TODO: address mapping entries for partners
         }
     }
 
@@ -208,6 +209,7 @@ contract WeddingManager is Ownable {
         payable
         weddingIdExists(_weddingId)
     {
+        require(weddings[_weddingId].status == 3, "Wedding not complete");
         require(
             weddings[_weddingId].partner1.wallet != msg.sender &&
                 weddings[_weddingId].partner2.wallet != msg.sender,
