@@ -236,7 +236,6 @@ const Wedding = () => {
       progress: undefined,
     });
     const event = await weddingManager.on("RingSent", (to, from, ringId) => {
-      setEventMessage("The ring is transferred to - ", to);
     });
   };
 
