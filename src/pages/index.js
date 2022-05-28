@@ -7,6 +7,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 import {useRouter} from 'next/router';
 import React, { useState, useEffect } from 'react';
+import ViewWedding from "./viewWedding";
 
 
 
@@ -23,7 +24,7 @@ export default function Home() {
         //setAccount(currentAccount);
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const contractAddress ='0xe7f1725e7734ce288f8367e1bb143e90bb3f0512';
+        const contractAddress ='0x40775702A4Bc7ADE8Aaf1fa6872484D709F8aef2';
         const weddingManager = new ethers.Contract(contractAddress, WeddingContract.abi,signer);
         const weddingId = await weddingManager.getWeddingIdByAccount();
         const weddingStatus = await weddingManager.getWeddingStatus(weddingId.toNumber());

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 const ViewWedding = () => {
   const router = useRouter();
   const { id } = router.query;
-  const contractAddress = "0xbDB63a121dE60b4036b212856928e43b82378a06"; // contract deployed on rinkeby
+  const contractAddress = "0x40775702A4Bc7ADE8Aaf1fa6872484D709F8aef2"; // contract deployed on rinkeby
 
   const [wedding1, setWedding1] = useState({
     partner1Name: "",
