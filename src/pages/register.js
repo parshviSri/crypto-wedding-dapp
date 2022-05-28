@@ -60,8 +60,8 @@ const Register = () => {
         draggable
         pauseOnHover
       />
-      <div className="text-center bg-white/50">
-        <h2 className="font-medium leading-tight text-2xl mt-0 mb-2 text-gray-800">
+      <div className="text-center bg-white/60 py-3">
+        <h2 className="font-medium leading-tight text-2xl mt-0 mb-2 text-gray-700">
           Welcome
         </h2>
         <p className="font-light text-gray-600">
@@ -115,7 +115,7 @@ const Register = () => {
       </div>
       <div className="pb-3 flex items-center justify-center">
         <button
-          className="bg-[#c99c9c] hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-[#c08c8c] hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           onClick={createWedding}
         >
           {" "}

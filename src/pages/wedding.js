@@ -198,7 +198,7 @@ const Wedding = () => {
       const event = await weddingManager.on(
         "RingCreated",
         (address, ringId, uri) => {
-          toast("Please wait your ring is being minted!!", {
+          toast("Please wait while your ring is being minted!!", {
             position: "top-center",
             autoClose: 15000,
             hideProgressBar: false,
@@ -293,48 +293,53 @@ const Wedding = () => {
       </div> */}
       <div>
         {weddingDetails.partner1.name && (
-          <div className="text-center p-3">
-            <h2 className="font-medium leading-tight text-2xl mt-0 mb-2 text-gray-700">
-              Welcome to wedding page of {weddingDetails.partner1.name} and{" "}
-              {weddingDetails.partner2.name}
+          <div className="text-center p-3 bg-white/60">
+            <h2 className="font-light leading-tight text-2xl mt-0 mb-2 text-gray-700">
+              Welcome to{" "}
+              <span className="font-bold">{weddingDetails.partner1.name}</span>{" "}
+              and{" "}
+              <span className="font-bold">{weddingDetails.partner2.name}</span>
+              {"'s "} wedding page
             </h2>
             {weddingDetails.status < 3 && (
-              <p> Get Started with your crypto wedding</p>
+              <p className="text-gray-500">
+                Mint NFT rings and exchange them with your partner to complete
+                your crypto wedding!
+              </p>
             )}
             {weddingDetails.status == 1 && (
-              <div>
+              <div className="m-3">
                 {account.toString().toUpperCase() ==
                   weddingDetails.partner1.address.toUpperCase() && (
                   <div>
                     {weddingDetails.partner1.sentRing || (
                       <div className="flex flex-row">
-                        <div className="basis-1/2 bg-black">
-                          <div className="m-6 flex items-center justify-center">
-                            <div className="bg-gray-100 p-6">
-                              <img
-                                src={ring1.image || dummyImg}
-                                width="120"
-                                height="120"
-                              />
-                            </div>
-                            <input type="file" onChange={addImageRing} />
+                        <div className="flex items-center justify-center basis-1/2 bg-gray-100">
+                          <div className="m-6 p-4 bg-[#eddede]/50 rounded-lg shadow-lg">
+                            <img
+                              src={ring1.image || dummyImg}
+                              width="120"
+                              height="120"
+                            />
                           </div>
+                          <input type="file" onChange={addImageRing} />
                         </div>
                         <div className="basis-1/2 text-center">
-                          <p>Your digital ring</p>
-                          <p>
-                            You can create your own ring by uploading any image
-                            of your choice and we will mint it as an NFT which
-                            will remain on block chain forever{" "}
+                          <p className="text-gray-700 font-bold">
+                            Create your digital ring
+                          </p>
+                          <p className="text-gray-500">
+                            You can create your own digital ring as an NFT by
+                            uploading an image of your choice and we will mint
+                            it as an NFT{" "}
                           </p>
                           <div className="m-6 flex items-center justify-center">
                             <button
-                              className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                              className="bg-[#c08c8c] hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                               onClick={() => {
                                 mintRing(tokenUri);
                               }}
                             >
-                              {" "}
                               Mint Your Ring
                             </button>
                           </div>
@@ -348,28 +353,28 @@ const Wedding = () => {
                   <div>
                     {weddingDetails.partner2.sentRing || (
                       <div className="flex flex-row">
-                        <div className="basis-1/2 bg-black">
-                          <div className="m-6 flex items-center justify-center">
-                            <div className="p-6">
-                              <img
-                                src={ring2.image || dummyImg}
-                                width="120"
-                                height="120"
-                              />
-                            </div>
-                            <input type="file" onChange={addImageRing} />
+                        <div className="flex items-center justify-center basis-1/2 bg-gray-100">
+                          <div className="m-6 p-4 bg-[#eddede]/50 rounded-lg shadow-lg">
+                            <img
+                              src={ring2.image || dummyImg}
+                              width="120"
+                              height="120"
+                            />
                           </div>
+                          <input type="file" onChange={addImageRing} />
                         </div>
                         <div className="basis-1/2 text-center">
-                          <p>Your digital ring</p>
-                          <p>
-                            You can create your own ring by uploading any image
-                            of your choice and we will mint it as an NFT which
-                            will remain on block chain forever{" "}
+                          <p className="text-gray-700 font-bold">
+                            Create your digital ring
+                          </p>
+                          <p className="text-gray-500">
+                            You can create your own digital ring as an NFT by
+                            uploading an image of your choice and we will mint
+                            it as an NFT{" "}
                           </p>
                           <div className="m-6 flex items-center justify-center">
                             <button
-                              className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                              className="bg-[#c08c8c] hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                               onClick={() => {
                                 mintRing(tokenUri);
                               }}
@@ -392,8 +397,8 @@ const Wedding = () => {
               </div>
             )}
 
-            <div className="flex flex-row justify-center">
-              <div className="p-10">
+            <div className="flex flex-row justify-center items-center">
+              <div className="my-4 p-4 bg-[#eddede]/50 rounded-lg shadow-lg">
                 <a
                   href={openSea + weddingDetails.partner2.ringId}
                   target="_blank"
@@ -404,30 +409,35 @@ const Wedding = () => {
                     className="object-contain h-48 w-96"
                   />
                 </a>
-                <p>Vows</p>
+                <p className="text-gray-600">Vows</p>
               </div>
-              <div>
+              <div className="bg-gray-100/50 shadow-lg">
                 {weddingDetails.status == 2 && (
                   <button
-                    className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline m-12"
+                    className="bg-[#c08c8c] hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline m-12"
                     onClick={sendRing}
                   >
-                    Exchange The Ring
+                    Exchange your rings
                   </button>
                 )}
                 {weddingDetails.status == 3 && (
-                  <div className="mt-12">
-                    <p className="font-medium leading-tight text-2xl mt-0 mb-2">
-                      Congratulation !!
+                  <div className="m-6">
+                    <p className="font-bold leading-tight text-2xl mt-0 mb-2 text-[#ae6b6b]">
+                      Congratulations!
                     </p>
-                    <p className="font-medium leading-tight text-2xl mt-0 mb-2">
+                    <p className="font-medium leading-tight text-2xl mt-0 mb-2 text-gray-700">
                       {weddingDetails.partner1.name} and{" "}
-                      {weddingDetails.partner2.name} are married !!
+                      {weddingDetails.partner2.name} are married on the
+                      blockchain
+                    </p>{" "}
+                    <p className="text-sm font-light leading-tight mb-2 text-gray-700">
+                      This transaction is recorded on the block chain where it
+                      will be stored forever!
                     </p>
                   </div>
                 )}
               </div>
-              <div className="p-10">
+              <div className="p-4 bg-[#eddede]/50 rounded-lg shadow-lg">
                 <a
                   href={openSea + weddingDetails.partner1.ringId}
                   target="_blank"
@@ -439,28 +449,29 @@ const Wedding = () => {
                     height="320"
                   />
                 </a>
-                <p>Vows</p>
+                <p className="text-gray-600">Vows</p>
               </div>
             </div>
 
-            <div className="flex flex-row justify-center">
+            <div className="flex flex-row justify-center m-3 p-5">
               {account.toString().toUpperCase() ==
                 weddingDetails.partner1.address.toUpperCase() ||
                 account.toString().toUpperCase() ==
                   weddingDetails.partner2.address.toUpperCase() || (
                   <div className="flex items-center space-x-4">
-                    <p>
-                      Send a wedding gift to{" "}
+                    <p className="text-gray-600 font-light">
+                      Send{" "}
                       <span className="font-bold">
                         {weddingDetails.partner1.name}
                       </span>{" "}
-                      and &nbsp;
+                      and{" "}
                       <span className="font-bold">
                         {weddingDetails.partner2.name}
-                      </span>
+                      </span>{" "}
+                      a wedding gift in crypto
                     </p>
                     <input
-                      className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      className="appearance-none border-2 border-[#D1E6D7] rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       placeholder="gift amount in ether"
                       onChange={(e) =>
                         updateFormInput({
@@ -470,7 +481,7 @@ const Wedding = () => {
                       }
                     />
                     <button
-                      className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      className="bg-[#6D9979] hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                       onClick={sendGift}
                     >
                       {" "}
@@ -512,42 +523,44 @@ const Wedding = () => {
                   </div>
                 )}
             </div>
-            {(account.toString().toUpperCase() ==
-              weddingDetails.partner1.address.toUpperCase() ||
-              account.toString().toUpperCase() ==
-                weddingDetails.partner2.address.toUpperCase()) && (
-              <div className="flex flex-row justify-center space-x-4">
-                <div>
-                  <input
-                    type="number"
-                    value={withdrawFormInput.withdrawAmount}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    placeholder="withdraw amount in ether"
-                    onChange={(e) =>
-                      updateWithdrawFormInput({
-                        ...formInput,
-                        withdrawAmount: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div>
+            {weddingDetails.status == 3 &&
+              (account.toString().toUpperCase() ==
+                weddingDetails.partner1.address.toUpperCase() ||
+                account.toString().toUpperCase() ==
+                  weddingDetails.partner2.address.toUpperCase()) && (
+                <div className="flex flex-row justify-center space-x-4">
+                  <div>
+                    <input
+                      type="number"
+                      value={withdrawFormInput.withdrawAmount}
+                      className="appearance-none border-4 border-[#eddede] rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      placeholder="withdraw amount in ether"
+                      onChange={(e) =>
+                        updateWithdrawFormInput({
+                          ...formInput,
+                          withdrawAmount: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
                   <button
-                    className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-[#c08c8c] hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     onClick={withdrawBalance}
                   >
                     Withdraw Balance
                   </button>
-                </div>
-                <div>
-                  <span>
-                    Current balance: &nbsp;
-                    {ethers.utils.formatUnits(weddingDetails.balance, "ether")}
-                    &nbsp; ether
+                  <span className="font-light text-gray-600 pt-2">
+                    Current balance:&nbsp;
+                    <span className="text-[#6D9979]">
+                      {ethers.utils.formatUnits(
+                        weddingDetails.balance,
+                        "ether"
+                      )}
+                    </span>
+                    &nbsp;ether
                   </span>
                 </div>
-              </div>
-            )}
+              )}
           </div>
         )}
         {id > 0 || weddingDetails.partner1.name || (

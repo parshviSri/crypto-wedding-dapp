@@ -17,31 +17,33 @@ export default function Home() {
       </Head>
 
       <main>
-        <div className="bg-[url('/background3.jpeg')] pt-3">
-          <div className="text-center space-x-3 text-gray-400">
-            <span>Find wedding</span>
-            <input
-              type="number"
-              className="border-2 border-gray-100"
-              placeholder="wedding id"
-              onChange={(event) => {
-                router.push({
-                  pathname: "/wedding",
-                  query: { id: event.target.value },
-                });
-              }}
-            />
-          </div>
-          <div className="mt-4 flex items-center justify-center">
-            <button
-              className="bg-[#c99c9c] hover:bg-gray-200 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-              onClick={() => {
-                router.push("/register");
-              }}
-            >
-              {" "}
-              Register your Marriage
-            </button>
+        <div className="bg-[url('/background3.jpeg')]">
+          <div className="bg-white/60 pt-3">
+            <div className="text-center space-x-3 text-gray-400">
+              <span>Find wedding</span>
+              <input
+                type="number"
+                className="border-2 border-gray-100"
+                placeholder=" wedding id"
+                onChange={(event) => {
+                  router.push({
+                    pathname: "/wedding",
+                    query: { id: event.target.value },
+                  });
+                }}
+              />
+            </div>
+            <div className="mt-4 flex items-center justify-center">
+              <button
+                className="bg-[#c08c8c] hover:bg-gray-200 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                onClick={() => {
+                  router.push("/register");
+                }}
+              >
+                {" "}
+                Register your Marriage
+              </button>
+            </div>
           </div>
           <div className="flex flex-row">
             <div className="basis-3/4 p-6 content-center m-10">
@@ -107,6 +109,7 @@ export default function Home() {
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
           target="_blank"
           rel="noopener noreferrer"
+          className="text-[#c99c9c] bg-[]"
         >
           Minted by &nbsp;<strong>Team Wedding Crashers @ DappCamp3</strong>
           {/* <span className={styles.logo}>
