@@ -16,23 +16,25 @@ export default function Home() {
         <link rel="icon" href="/Crypto.png" />
       </Head>
 
-      <main className="bg-[url('/background2.jpeg')]">
-        <div>
-        <div className="text-center">
-        <h1>Find Your Wedding</h1>
-        <input
-          type="number"
-          onChange={(event) => {
-            router.push({
-              pathname: "/wedding",
-              query: { id: event.target.value },
-            });
-          }}
-        />
-      </div>
-      <div className="m-2 flex items-center justify-center">
+      <main>
+        <div className="bg-[url('/background3.jpeg')] pt-3">
+          <div className="text-center space-x-3 text-gray-400">
+            <span>Find wedding</span>
+            <input
+              type="number"
+              className="border-2 border-gray-100"
+              placeholder="wedding id"
+              onChange={(event) => {
+                router.push({
+                  pathname: "/wedding",
+                  query: { id: event.target.value },
+                });
+              }}
+            />
+          </div>
+          <div className="mt-4 flex items-center justify-center">
             <button
-              className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+              className="bg-[#c99c9c] hover:bg-gray-200 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
               onClick={() => {
                 router.push("/register");
               }}
@@ -43,25 +45,23 @@ export default function Home() {
           </div>
           <div className="flex flex-row">
             <div className="basis-3/4 p-6 content-center m-10">
-            <h1
-            class="text-4xl font-bold text-center md:text-5xl md:text-left"
-          >
-            Get married on the Blockchain !!
-          </h1>
-          <br/>
-          <p class="text-darkGrayishBlue md:text-left">
-          Register weddings using digital technology, maintain the sanctity of the wedding, and celebrate the occasion with your friends and family. <br/>Note that this registration process would be symbolic and has no legal binding(yet).
-          </p>
-              
-          <div className="items-center mx-auto p-10">
-                
-              <div  className="items-center mx-auto p-10">
+              <h1 class="text-4xl font-bold text-center md:text-5xl md:text-left text-gray-800">
+                Get married on the Blockchain!
+              </h1>
+              <br />
+              <p class="text-darkGrayishBlue md:text-left text-gray-700">
+                Register weddings using digital technology, maintain the
+                sanctity of the wedding on the blockchain, and celebrate the
+                occasion with your friends and family. <br />
+                Note that this registration process would be symbolic and has no
+                legal binding <span class="italic">(yet)</span>.
+              </p>
+
+              <div className="items-center mx-auto p-10">
                 <ViewWedding />
               </div>
-          </div>
-          <div className="flex flex-col">
-         
-          {/* <div className="m-6 flex items-center justify-center">
+              <div className="flex flex-col">
+                {/* <div className="m-6 flex items-center justify-center">
             <button
               className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               onClick={() => {
@@ -72,8 +72,7 @@ export default function Home() {
               See Weddings
             </button>
           </div> */}
-        </div>
-
+              </div>
             </div>
             <div className="basis-1/2 content-center">
               <div className="p-6 mt-8">
@@ -101,9 +100,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-       
-
-        
       </main>
 
       <footer className={styles.footer}>
@@ -112,7 +108,7 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by &nbsp;<strong>Team Wedding Crashers @ DappCamp</strong>
+          Minted by &nbsp;<strong>Team Wedding Crashers @ DappCamp3</strong>
           {/* <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span> */}

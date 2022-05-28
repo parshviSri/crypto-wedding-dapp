@@ -18,7 +18,7 @@ const Register = () => {
   const createWedding = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
-    
+
     const weddingManager = new ethers.Contract(
       contractAddress,
       Wedding.abi,
@@ -41,7 +41,7 @@ const Register = () => {
     });
     const event = await weddingManager.on("WeddingCreated", (tokenId) => {
       console.log(tokenId.toNumber());
-      alert(`Your Wedding Id- ${tokenId.toNumber()}`)
+      alert(`Your Wedding Id- ${tokenId.toNumber()}`);
       setTokenId(tokenId.toNumber());
       router.push({ pathname: "/wedding", query: { id: tokenId.toNumber() } });
     });
@@ -60,15 +60,18 @@ const Register = () => {
         draggable
         pauseOnHover
       />
-      <div className="text-center">
-        <h2 className="font-medium leading-tight text-2xl mt-0 mb-2">
+      <div className="text-center bg-white/50">
+        <h2 className="font-medium leading-tight text-2xl mt-0 mb-2 text-gray-800">
           Welcome
         </h2>
-        <p> Get Started with your crypto wedding</p>
+        <p className="font-light text-gray-600">
+          {" "}
+          Get started with your crypto wedding
+        </p>
       </div>
-      <div className="flex flex-row m-24 justify-center">
-        <div className="bg-white shadow-md rounded p-6 mb-4 ml-10">
-          <h1 className="text-center">Spouse 1</h1>
+      <div className="flex flex-row m-6 justify-center">
+        <div className="border-2 border-[#D1E6D7] hover:border-[#6D9979] rounded shadow-lg p-6 mb-4 ml-10">
+          <h1 className="text-center font-bold text-gray-600">Partner 1</h1>
           <div className="m-6">
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -88,8 +91,8 @@ const Register = () => {
             />
           </div>
         </div>
-        <div className="bg-white shadow-md rounded p-6 mb-4 ml-10">
-          <h1 className="text-center">Spouse 2</h1>
+        <div className="border-2 border-[#D1E6D7] hover:border-[#6D9979] rounded-lg shadow-lg p-6 mb-4 ml-10">
+          <h1 className="text-center font-bold text-gray-600">Partner 2</h1>
           <div className="m-6">
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -110,9 +113,9 @@ const Register = () => {
           </div>
         </div>
       </div>
-      <div className="m-6 flex items-center justify-center">
+      <div className="pb-3 flex items-center justify-center">
         <button
-          className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-[#c99c9c] hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           onClick={createWedding}
         >
           {" "}

@@ -81,7 +81,7 @@ const Wedding = () => {
         status: wedding.status.toNumber(),
       });
       console.log(weddingDetails);
-      console.log((id > 0 && weddingDetails.partner1.name));
+      console.log(id > 0 && weddingDetails.partner1.name);
       const getmetaData1 = await axios.get(wedding.partner1.tokeUri);
       console.log(getmetaData1.data.image);
       setRing1({
@@ -235,8 +235,7 @@ const Wedding = () => {
       draggable: true,
       progress: undefined,
     });
-    const event = await weddingManager.on("RingSent", (to, from, ringId) => {
-    });
+    const event = await weddingManager.on("RingSent", (to, from, ringId) => {});
   };
 
   const sendGift = async () => {
@@ -261,11 +260,9 @@ const Wedding = () => {
       WeddingContract.abi,
       signer
     );
-    let value = ethers.utils.parseUnits(withdrawFormInput.withdrawAmount, "ether");
-    console.log(value);
     const wedding = await weddingManager.withdrawEther(
       id,
-      value
+      ethers.utils.parseUnits(withdrawFormInput.withdrawAmount, "ether")
     );
   };
 
@@ -296,8 +293,8 @@ const Wedding = () => {
       </div> */}
       <div>
         {weddingDetails.partner1.name && (
-          <div className="text-center">
-            <h2 className="font-medium leading-tight text-2xl mt-0 mb-2">
+          <div className="text-center p-3">
+            <h2 className="font-medium leading-tight text-2xl mt-0 mb-2 text-gray-700">
               Welcome to wedding page of {weddingDetails.partner1.name} and{" "}
               {weddingDetails.partner2.name}
             </h2>
@@ -402,7 +399,10 @@ const Wedding = () => {
                   target="_blank"
                 >
                   {" "}
-                  <img src={ring1.image || dummyImg}  className="object-contain h-48 w-96"/>
+                  <img
+                    src={ring1.image || dummyImg}
+                    className="object-contain h-48 w-96"
+                  />
                 </a>
                 <p>Vows</p>
               </div>
@@ -432,20 +432,33 @@ const Wedding = () => {
                   href={openSea + weddingDetails.partner1.ringId}
                   target="_blank"
                 >
-                  <img src={ring2.image || dummyImg} className="object-contain h-48 w-96" width="320" height="320" />
+                  <img
+                    src={ring2.image || dummyImg}
+                    className="object-contain h-48 w-96"
+                    width="320"
+                    height="320"
+                  />
                 </a>
                 <p>Vows</p>
               </div>
             </div>
 
             <div className="flex flex-row justify-center">
-            {(account.toString().toUpperCase() ==
-                  weddingDetails.partner1.address.toUpperCase() ||  account.toString().toUpperCase() ==
-                  weddingDetails.partner2.address.toUpperCase() )||<div className="flex items-center ">
-                  <p>
-                    Send a wedding gift to <span className="font-bold">{weddingDetails.partner1.name}</span> and &nbsp;
-                    <span className="font-bold">{weddingDetails.partner2.name}</span>
-                  </p>
+              {account.toString().toUpperCase() ==
+                weddingDetails.partner1.address.toUpperCase() ||
+                account.toString().toUpperCase() ==
+                  weddingDetails.partner2.address.toUpperCase() || (
+                  <div className="flex items-center space-x-4">
+                    <p>
+                      Send a wedding gift to{" "}
+                      <span className="font-bold">
+                        {weddingDetails.partner1.name}
+                      </span>{" "}
+                      and &nbsp;
+                      <span className="font-bold">
+                        {weddingDetails.partner2.name}
+                      </span>
+                    </p>
                     <input
                       className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       placeholder="gift amount in ether"
@@ -496,45 +509,48 @@ const Wedding = () => {
                     >
                       1 Ether
                     </button> */}
-                  </div>}
-              
+                  </div>
+                )}
             </div>
             {(account.toString().toUpperCase() ==
-                  weddingDetails.partner1.address.toUpperCase() ||  account.toString().toUpperCase() ==
-                  weddingDetails.partner2.address.toUpperCase() )&&<div className="flex flex-row justify-center">
-                  <div>
-                    <input type="number"
+              weddingDetails.partner1.address.toUpperCase() ||
+              account.toString().toUpperCase() ==
+                weddingDetails.partner2.address.toUpperCase()) && (
+              <div className="flex flex-row justify-center space-x-4">
+                <div>
+                  <input
+                    type="number"
                     value={withdrawFormInput.withdrawAmount}
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      placeholder="withdraw amount in ether"
-                      onChange={(e) =>
-                        updateWithdrawFormInput({
-                          ...formInput,
-                          withdrawAmount: e.target.value,
-                        })
-                      }
-                    />
-                    </div>
-                    <div>
-                    <button
-                      className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                      onClick={withdrawBalance}
-                    >
-                      Withdraw Balance
-                    </button>
-                    </div>
-                    <div>
-                    <span>
-                      Current balance: &nbsp;
-                      {ethers.utils.formatUnits(weddingDetails.balance, "ether")}
-                      &nbsp; ether
-                    </span>
-                  </div>
-                </div>}
-            
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    placeholder="withdraw amount in ether"
+                    onChange={(e) =>
+                      updateWithdrawFormInput({
+                        ...formInput,
+                        withdrawAmount: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <button
+                    className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    onClick={withdrawBalance}
+                  >
+                    Withdraw Balance
+                  </button>
+                </div>
+                <div>
+                  <span>
+                    Current balance: &nbsp;
+                    {ethers.utils.formatUnits(weddingDetails.balance, "ether")}
+                    &nbsp; ether
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         )}
-        {(id > 0 || weddingDetails.partner1.name) || (
+        {id > 0 || weddingDetails.partner1.name || (
           <div className="text-center">
             <h1>No Wedding with this id is present !!</h1>
           </div>

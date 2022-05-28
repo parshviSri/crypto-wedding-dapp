@@ -51,36 +51,41 @@ const ViewWedding = () => {
   };
 
   return (
-    <div className="flex-row">
-      <h4
-            class="font-bold mx-20 text-center md:text-2xl md:text-left text-green-400"
-          >
-            Recently registered weddings
-          </h4>
+    <div className="flex-row bg-[white]/50 shadow rounded">
+      <h4 class="font-bold mx-20 pt-4 text-center md:text-2xl md:text-left text-[#6D9979]">
+        Recently registered weddings
+      </h4>
       <ul class="list-none">
-      {weddings.map((wedding, id) => {
-        return (
-          <li>
-          <div class="mx-20 rounded shadow-lg w-3/4">     
-            
-            <div class="m-10" key={id}>
-              <button
-                onClick={() => {
-                  router.push({ pathname: "/wedding", query: { id: id + 1 } });
-                }}
-              >
-                <div class="font-bold text-xl mb-8">Wedding - {id + 1}</div>
-                <p class="text-gray-700 mx-auto text-base">
-                  Wedding of {wedding.partner1.name} and {wedding.partner2.name}
-                </p>
-              </button>
-            </div>
-            
-          </div>
-          </li>
-        );
-      })}
-      </ul>      
+        {weddings.map((wedding, id) => {
+          return (
+            <li>
+              <div class="mx-20 w-3/4">
+                <div
+                  class="m-10  bg-white border-2 border-[#6D9979] rounded-lg shadow-lg"
+                  key={id}
+                >
+                  <button
+                    onClick={() => {
+                      router.push({
+                        pathname: "/wedding",
+                        query: { id: id + 1 },
+                      });
+                    }}
+                  >
+                    <p class="font-bold text-xl p-3 text-gray-600">
+                      Wedding - {id + 1}
+                    </p>
+                    <p class="text-gray-700 mx-auto text-base p-3">
+                      Wedding of {wedding.partner1.name} and{" "}
+                      {wedding.partner2.name}
+                    </p>
+                  </button>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 };
