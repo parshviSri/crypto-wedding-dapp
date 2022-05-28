@@ -33,7 +33,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <div>
       <nav className="border-b p-3 flex flex-row bg-[#eddede]">
-        <div className="basis-1/2">
+        <div className="basis-1/2 pt-1">
           <Link href="/">
             <a className="p-6 text-[#ae6b6b]">Home</a>
           </Link>
@@ -46,7 +46,7 @@ function MyApp({ Component, pageProps }) {
             </a>
           </Link>
         </div>
-        <div className="basis-1/4 text-[#d2adad]">
+        <div className="basis-1/4 text-[#d2adad] pt-1">
           {con || (
             <button className="bg-gray-700 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
               Connect Wallet
