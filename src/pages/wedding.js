@@ -249,7 +249,7 @@ const Wedding = () => {
       signer
     );
     const overrides = {
-      value: ethers.utils.parseUnits(formInput.giftAmount, "gwei"),
+      value: ethers.utils.parseUnits(formInput.giftAmount, "ether"),
     };
     const wedding = await weddingManager.sendEther(id, overrides);
   };
@@ -281,7 +281,7 @@ const Wedding = () => {
         draggable
         pauseOnHover
       />
-      <div className="text-center">
+      {/* <div className="text-center">
         <h1>Find Your Wedding</h1>
         <input
           type="number"
@@ -292,7 +292,7 @@ const Wedding = () => {
             });
           }}
         />
-      </div>
+      </div> */}
       <div>
         {weddingDetails.partner1.name && (
           <div className="text-center">
@@ -394,14 +394,14 @@ const Wedding = () => {
               </div>
             )}
 
-            <div className="flex flex-row">
+            <div className="flex flex-row justify-center">
               <div className="p-10">
                 <a
                   href={openSea + weddingDetails.partner2.ringId}
                   target="_blank"
                 >
                   {" "}
-                  <img src={ring1.image || dummyImg} width="320" height="320" />
+                  <img src={ring1.image || dummyImg}  className="object-contain h-48 w-96"/>
                 </a>
                 <p>Vows</p>
               </div>
@@ -431,99 +431,104 @@ const Wedding = () => {
                   href={openSea + weddingDetails.partner1.ringId}
                   target="_blank"
                 >
-                  <img src={ring2.image || dummyImg} width="320" height="320" />
+                  <img src={ring2.image || dummyImg} className="object-contain h-48 w-96" width="320" height="320" />
                 </a>
                 <p>Vows</p>
               </div>
             </div>
 
-            <div className="flex flex-row">
-              <p>
-                {" "}
-                Send a wedding gift to {weddingDetails.partnerName1} and{" "}
-                {weddingDetails.partnerName2}
-              </p>
-              <div className="m-6 flex items-center justify-center">
-                <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  placeholder="gift amount in gwei"
-                  onChange={(e) =>
-                    updateFormInput({
-                      ...formInput,
-                      giftAmount: e.target.value,
-                    })
-                  }
-                />
-                <button
-                  className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  onClick={sendGift}
-                >
-                  {" "}
-                  Send Gift{" "}
-                </button>
-                <button
-                  className="bg-gray-600 hover:bg-gray-400 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline"
-                  onClick={(e) =>
-                    updateFormInput({
-                      ...formInput,
-                      giftAmount: "1000",
-                    })
-                  }
-                >
-                  1 Szabo
-                </button>
-                <button
-                  className="bg-gray-600 hover:bg-gray-400 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline"
-                  onClick={(e) =>
-                    updateFormInput({
-                      ...formInput,
-                      giftAmount: "1000000",
-                    })
-                  }
-                >
-                  1 Finney
-                </button>
-                <button
-                  className="bg-gray-600 hover:bg-gray-400 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline"
-                  onClick={(e) =>
-                    updateFormInput({
-                      ...formInput,
-                      giftAmount: "1000000000",
-                    })
-                  }
-                >
-                  1 Ether
-                </button>
-              </div>
+            <div className="flex flex-row justify-center">
+            {(account.toString().toUpperCase() ==
+                  weddingDetails.partner1.address.toUpperCase() ||  account.toString().toUpperCase() ==
+                  weddingDetails.partner2.address.toUpperCase() )||<div className="flex items-center ">
+                  <p>
+                    Send a wedding gift to <span className="font-bold">{weddingDetails.partner1.name}</span> and &nbsp;
+                    <span className="font-bold">{weddingDetails.partner2.name}</span>
+                  </p>
+                    <input
+                      className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      placeholder="gift amount in ether"
+                      onChange={(e) =>
+                        updateFormInput({
+                          ...formInput,
+                          giftAmount: e.target.value,
+                        })
+                      }
+                    />
+                    <button
+                      className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      onClick={sendGift}
+                    >
+                      {" "}
+                      Send Gift{" "}
+                    </button>
+                    {/* <button
+                      className="bg-gray-600 hover:bg-gray-400 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline"
+                      onClick={(e) =>
+                        updateFormInput({
+                          ...formInput,
+                          giftAmount: "1000",
+                        })
+                      }
+                    >
+                      1 Szabo
+                    </button>
+                    <button
+                      className="bg-gray-600 hover:bg-gray-400 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline"
+                      onClick={(e) =>
+                        updateFormInput({
+                          ...formInput,
+                          giftAmount: "1000000",
+                        })
+                      }
+                    >
+                      1 Finney
+                    </button>
+                    <button
+                      className="bg-gray-600 hover:bg-gray-400 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline"
+                      onClick={(e) =>
+                        updateFormInput({
+                          ...formInput,
+                          giftAmount: "1000000000",
+                        })
+                      }
+                    >
+                      1 Ether
+                    </button> */}
+                  </div>}
+              
             </div>
-            <div className="flex flex-row">
-              <div className="m-6 flex items-center justify-center">
-                <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  placeholder="withdraw amount in gwei"
-                  onChange={(e) =>
-                    updateWithdrawFormInput({
-                      ...formInput,
-                      withdrawAmount: e.target.value,
-                    })
-                  }
-                />
-                <button
-                  className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  onClick={withdrawBalance}
-                >
-                  Withdraw Balance
-                </button>
-                <span>
-                  Current balance :
-                  {ethers.utils.formatUnits(weddingDetails.balance, "gwei")}
-                  gwei
-                </span>
-              </div>
-            </div>
+            {(account.toString().toUpperCase() ==
+                  weddingDetails.partner1.address.toUpperCase() ||  account.toString().toUpperCase() ==
+                  weddingDetails.partner2.address.toUpperCase() )&&<div className="flex flex-row justify-center">
+                  <div className="m-6 flex items-center justify-center">
+                    <input
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      placeholder="withdraw amount in gwei"
+                      onChange={(e) =>
+                        updateWithdrawFormInput({
+                          ...formInput,
+                          withdrawAmount: e.target.value,
+                        })
+                      }
+                    />
+                    <button
+                      className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      onClick={withdrawBalance}
+                    >
+                      Withdraw Balance
+                    </button>
+                    <span>
+                      Current balance :
+                      {ethers.utils.formatUnits(weddingDetails.balance, "gwei")}
+                      gwei
+                    </span>
+                  </div>
+                </div>}
+            
           </div>
         )}
-        {(id > 0 && weddingDetails.partner1.name) || (
+        {(id > 0 || weddingDetails.partner1.name) || (
           <div className="text-center">
             <h1>No Wedding with this id is present !!</h1>
           </div>

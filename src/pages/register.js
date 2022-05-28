@@ -14,19 +14,11 @@ const Register = () => {
     partner2: "",
   });
   const [tokenId, setTokenId] = useState(null);
-  const contractAddress = "0x40775702A4Bc7ADE8Aaf1fa6872484D709F8aef2";
+  const contractAddress = "0xbDB63a121dE60b4036b212856928e43b82378a06";
   const createWedding = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
-    toast("Please wait your wedding is being created!!", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+    
     const weddingManager = new ethers.Contract(
       contractAddress,
       Wedding.abi,
@@ -39,8 +31,17 @@ const Register = () => {
       formInput.partnerName2
     );
     await transaction.wait();
+    toast("Please wait your wedding is being created!!", {
+      position: "top-center",
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
     const event = await weddingManager.on("WeddingCreated", (tokenId) => {
       console.log(tokenId.toNumber());
+      alert(`Your Wedding Id- ${tokenId.toNumber()}`)
       setTokenId(tokenId.toNumber());
       router.push({ pathname: "/wedding", query: { id: tokenId.toNumber() } });
     });
@@ -51,7 +52,6 @@ const Register = () => {
     <div className="bg-[url('/background3.jpeg')]">
       <ToastContainer
         position="top-center"
-        autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

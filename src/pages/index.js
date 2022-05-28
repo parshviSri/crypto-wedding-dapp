@@ -18,6 +18,29 @@ export default function Home() {
 
       <main className="bg-[url('/background2.jpeg')]">
         <div>
+        <div className="text-center">
+        <h1>Find Your Wedding</h1>
+        <input
+          type="number"
+          onChange={(event) => {
+            router.push({
+              pathname: "/wedding",
+              query: { id: event.target.value },
+            });
+          }}
+        />
+      </div>
+      <div className="m-2 flex items-center justify-center">
+            <button
+              className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+              onClick={() => {
+                router.push("/register");
+              }}
+            >
+              {" "}
+              Register your Marriage
+            </button>
+          </div>
           <div className="flex flex-row">
             <div className="basis-3/4 p-6 content-center m-10">
             <h1
@@ -37,17 +60,7 @@ export default function Home() {
               </div>
           </div>
           <div className="flex flex-col">
-          <div className="m-2 flex items-center justify-center">
-            <button
-              className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-              onClick={() => {
-                router.push("/register");
-              }}
-            >
-              {" "}
-              Register your Marriage
-            </button>
-          </div>
+         
           {/* <div className="m-6 flex items-center justify-center">
             <button
               className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

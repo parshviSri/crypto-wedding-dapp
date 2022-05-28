@@ -63,7 +63,7 @@ const ViewWedding = () => {
           <li>
           <div class="mx-20 rounded shadow-lg w-3/4">     
             
-            <div class="m-10">
+            <div class="m-10" key={id}>
               <button
                 onClick={() => {
                   router.push({ pathname: "/wedding", query: { id: id + 1 } });
@@ -74,16 +74,6 @@ const ViewWedding = () => {
                   Wedding of {wedding.partner1.name} and {wedding.partner2.name}
                 </p>
               </button>
-            
-              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 justify-right">
-                #photography
-              </span>
-              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                #travel
-              </span>
-              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                #winter
-              </span>
             </div>
             
           </div>

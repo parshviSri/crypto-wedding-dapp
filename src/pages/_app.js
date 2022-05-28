@@ -40,12 +40,7 @@ function MyApp({ Component, pageProps }) {
       <Link href='/'>
         <a className='p-6'>Home</a>
       </Link>
-      <Link href='/register'>
-        <a className='p-6'>Register</a>
-      </Link>
-      <Link href={{ pathname: '/wedding', query: { id:0 } }}>
-        <a className='p-6'>Wedding</a>
-      </Link>
+    
       </div>
       
       <div className='basis-1/2'>
