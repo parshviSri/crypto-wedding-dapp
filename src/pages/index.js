@@ -9,30 +9,58 @@ import ViewWedding from "./viewWedding";
 export default function Home() {
   const router = useRouter();
   return (
-    <div className="bg-[url('/background3.jpeg')]">
+    <div className="bg-[url('/background4.jpeg')]">
       <Head>
         <title>Crypto Wedding</title>
         <meta name="description" content="Get Married on Block Chain" />
         <link rel="icon" href="/Crypto.png" />
       </Head>
 
-      <main className="bg-[url('/background3.jpeg')]">
+      <main className="bg-[url('/background2.jpeg')]">
         <div>
           <div className="flex flex-row">
             <div className="basis-3/4 p-6 content-center m-10">
-              <h1 className="text-4xl font-bold">
-                Get married on the Blockchain !!
-              </h1>
-              <p className="m-2 text=xl p-6 tracking-widest">
-                Marriage registration is a tedious and expensive process in the
-                offline world. We want a way to register weddings using digital
-                technology, maintain the sanctity of the wedding, and celebrate
-                the occasion. Crypto Wedding allows us to do just that with an
-                easy-to-use app that lets you register your marriage on the
-                Ethereum Blockchain. Anyone can use this app, from anywhere in
-                the world. Note that this registration process would be symbolic
-                and has no legal binding(yet).
-              </p>
+            <h1
+            class="text-4xl font-bold text-center md:text-5xl md:text-left"
+          >
+            Get married on the Blockchain !!
+          </h1>
+          <br/>
+          <p class="text-darkGrayishBlue md:text-left">
+          Register weddings using digital technology, maintain the sanctity of the wedding, and celebrate the occasion with your friends and family. <br/>Note that this registration process would be symbolic and has no legal binding(yet).
+          </p>
+              
+          <div className="items-center mx-auto p-10">
+                
+              <div  className="items-center mx-auto p-10">
+                <ViewWedding />
+              </div>
+          </div>
+          <div className="flex flex-col">
+          <div className="m-2 flex items-center justify-center">
+            <button
+              className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+              onClick={() => {
+                router.push("/register");
+              }}
+            >
+              {" "}
+              Register your Marriage
+            </button>
+          </div>
+          {/* <div className="m-6 flex items-center justify-center">
+            <button
+              className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              onClick={() => {
+                router.push("/viewWedding");
+              }}
+            >
+              {" "}
+              See Weddings
+            </button>
+          </div> */}
+        </div>
+
             </div>
             <div className="basis-1/2 content-center">
               <div className="p-6 mt-8">
@@ -60,32 +88,9 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <ViewWedding />
+       
 
-        <div className="flex flex-col">
-          <div className="m-6 flex items-center justify-center">
-            <button
-              className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-              onClick={() => {
-                router.push("/register");
-              }}
-            >
-              {" "}
-              Get Started
-            </button>
-          </div>
-          <div className="m-6 flex items-center justify-center">
-            <button
-              className="bg-black hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              onClick={() => {
-                router.push("/wedding");
-              }}
-            >
-              {" "}
-              See Weddings
-            </button>
-          </div>
-        </div>
+        
       </main>
 
       <footer className={styles.footer}>
@@ -94,10 +99,10 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{" "}
-          <span className={styles.logo}>
+          Powered by &nbsp;<strong>Team Wedding Crashers @ DappCamp</strong>
+          {/* <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
+          </span> */}
         </a>
       </footer>
     </div>

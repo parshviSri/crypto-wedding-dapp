@@ -51,24 +51,31 @@ const ViewWedding = () => {
   };
 
   return (
-    <div className="flex flex-row">
+    <div className="flex-row">
+      <h4
+            class="font-bold mx-20 text-center md:text-2xl md:text-left text-green-400"
+          >
+            Recently registered weddings
+          </h4>
+      <ul class="list-none">
       {weddings.map((wedding, id) => {
         return (
-          <div class="max-w-sm rounded overflow-hidden shadow-lg">
-            <div class="px-6 py-4">
+          <li>
+          <div class="mx-20 rounded shadow-lg w-3/4">     
+            
+            <div class="m-10">
               <button
                 onClick={() => {
                   router.push({ pathname: "/wedding", query: { id: id + 1 } });
                 }}
               >
-                <div class="font-bold text-xl mb-2">Wedding - {id + 1}</div>
-                <p class="text-gray-700 text-base">
+                <div class="font-bold text-xl mb-8">Wedding - {id + 1}</div>
+                <p class="text-gray-700 mx-auto text-base">
                   Wedding of {wedding.partner1.name} and {wedding.partner2.name}
                 </p>
               </button>
-            </div>
-            <div class="px-6 pt-4 pb-2">
-              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+            
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 justify-right">
                 #photography
               </span>
               <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
@@ -78,9 +85,12 @@ const ViewWedding = () => {
                 #winter
               </span>
             </div>
+            
           </div>
+          </li>
         );
       })}
+      </ul>      
     </div>
   );
 };

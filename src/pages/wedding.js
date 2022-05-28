@@ -18,7 +18,7 @@ const Wedding = () => {
       name: "",
       ringId: 0,
       sentRing: false,
-      tokenUri: "",
+      tokeUri: "",
     },
     partner2: {
       address: "",
@@ -60,32 +60,35 @@ const Wedding = () => {
         signer
       );
       const wedding = await weddingManager.getWeddingById(id);
+      console.log(wedding);
       setWeddingDetails({
         partner1: {
           address: wedding.partner1.wallet,
           name: wedding.partner1.name,
           ringId: wedding.partner1.ringId.toNumber(),
           sentRing: wedding.partner1.sentRing,
-          tokenUri: wedding.partner1.tokenUri,
+          tokeUri: wedding.partner1.tokeUri,
         },
         partner2: {
           address: wedding.partner2.wallet,
           name: wedding.partner2.name,
           ringId: wedding.partner2.ringId.toNumber(),
           sentRing: wedding.partner2.sentRing,
-          tokenUri: wedding.partner2.tokenUri,
+          tokeUri: wedding.partner2.tokeUri,
         },
         thirdParty: wedding.thirdParty,
         balance: wedding.balance,
         status: wedding.status.toNumber(),
       });
-      console.log(wedding);
-      const getmetaData1 = await axios.get(wedding.partner1.tokenUri);
+      console.log(weddingDetails);
+      console.log((id > 0 && weddingDetails.partner1.name));
+      const getmetaData1 = await axios.get(wedding.partner1.tokeUri);
+      console.log(getmetaData1.data.image);
       setRing1({
         image: getmetaData1.data.image,
         metadata: getmetaData1.data.description,
       });
-      const getmetaData2 = await axios.get(wedding.partner2.tokenUri);
+      const getmetaData2 = await axios.get(wedding.partner2.tokeUri);
       setRing2({
         image: getmetaData2.data.image,
         metadata: getmetaData2.data.description,

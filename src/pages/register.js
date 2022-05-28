@@ -14,7 +14,7 @@ const Register = () => {
     partner2: "",
   });
   const [tokenId, setTokenId] = useState(null);
-  const contractAddress = "0xbDB63a121dE60b4036b212856928e43b82378a06";
+  const contractAddress = "0x40775702A4Bc7ADE8Aaf1fa6872484D709F8aef2";
   const createWedding = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
