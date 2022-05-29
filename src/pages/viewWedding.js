@@ -42,7 +42,7 @@ const ViewWedding = () => {
         signer
       );
       const weddings = [];
-      for (let i = 1; i < 5; i++) {
+      for (let i = 6; i < 10; i++) {
         weddings.push(await weddingManager.getWeddingById(i));
       }
       console.log(weddings);
@@ -68,7 +68,7 @@ const ViewWedding = () => {
                     onClick={() => {
                       router.push({
                         pathname: "/wedding",
-                        query: { id: id + 1 },
+                        query: { id: id + 6 },
                       });
                     }}
                   >
