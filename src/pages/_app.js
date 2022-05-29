@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }) {
     if (window.ethereum) {
       setCon(true);
       const account = await window.ethereum.request({ method: "eth_accounts" });
-      if (account.length == 0) {
+      if (account.length === 0) {
         const connectAccount = await window.ethereum.request({
           method: "eth_requestAccounts",
         });

@@ -95,7 +95,7 @@ const Wedding = () => {
       });
       console.log(
         weddingDetails.partner2.sentRing &&
-          account.toString().toUpperCase() ==
+          account.toString().toUpperCase() ===
             weddingDetails.partner2.address.toUpperCase()
       );
     } catch (err) {}
@@ -105,9 +105,9 @@ const Wedding = () => {
     const account = await window.ethereum.request({ method: "eth_accounts" });
     try {
       if (
-        account.toString().toUpperCase() ==
+        account.toString().toUpperCase() ===
           weddingDetails.partner1.address.toUpperCase() ||
-        account.toString().toUpperCase() ==
+        account.toString().toUpperCase() ===
           weddingDetails.partner2.address.toUpperCase()
       ) {
         const added = await client.add(file, {
@@ -116,7 +116,7 @@ const Wedding = () => {
         const url = `https://ipfs.infura.io/ipfs/${added.path}`;
         console.log(url);
         if (
-          account.toString().toUpperCase() ==
+          account.toString().toUpperCase() ===
           weddingDetails.partner1.address.toUpperCase()
         ) {
           const metadata = await uploadToIPFS(
@@ -134,7 +134,7 @@ const Wedding = () => {
           });
         }
         if (
-          account.toString().toUpperCase() ==
+          account.toString().toUpperCase() ===
           weddingDetails.partner2.address.toUpperCase()
         ) {
           const metadata = await uploadToIPFS(
@@ -307,9 +307,9 @@ const Wedding = () => {
                 your crypto wedding!
               </p>
             )}
-            {weddingDetails.status == 1 && (
+            {weddingDetails.status === 1 && (
               <div className="m-3">
-                {account.toString().toUpperCase() ==
+                {account.toString().toUpperCase() ===
                   weddingDetails.partner1.address.toUpperCase() && (
                   <div>
                     {weddingDetails.partner1.sentRing || (
@@ -348,7 +348,7 @@ const Wedding = () => {
                     )}
                   </div>
                 )}
-                {account.toString().toUpperCase() ==
+                {account.toString().toUpperCase() ===
                   weddingDetails.partner2.address.toUpperCase() && (
                   <div>
                     {weddingDetails.partner2.sentRing || (
@@ -412,7 +412,7 @@ const Wedding = () => {
                 <p className="text-gray-600">Vows</p>
               </div>
               <div className="bg-gray-100/50 shadow-lg">
-                {weddingDetails.status == 2 && (
+                {weddingDetails.status === 2 && (
                   <button
                     className="bg-[#c08c8c] hover:bg-gray-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline m-12"
                     onClick={sendRing}
@@ -420,7 +420,7 @@ const Wedding = () => {
                     Exchange your rings
                   </button>
                 )}
-                {weddingDetails.status == 3 && (
+                {weddingDetails.status === 3 && (
                   <div className="m-6">
                     <p className="font-bold leading-tight text-2xl mt-0 mb-2 text-[#ae6b6b]">
                       Congratulations!
@@ -454,9 +454,9 @@ const Wedding = () => {
             </div>
 
             <div className="flex flex-row justify-center m-3 p-5">
-              {account.toString().toUpperCase() ==
+              {account.toString().toUpperCase() ===
                 weddingDetails.partner1.address.toUpperCase() ||
-                account.toString().toUpperCase() ==
+                account.toString().toUpperCase() ===
                   weddingDetails.partner2.address.toUpperCase() || (
                   <div className="flex items-center space-x-4">
                     <p className="text-gray-600 font-light">
@@ -523,10 +523,10 @@ const Wedding = () => {
                   </div>
                 )}
             </div>
-            {weddingDetails.status == 3 &&
-              (account.toString().toUpperCase() ==
+            {weddingDetails.status === 3 &&
+              (account.toString().toUpperCase() ===
                 weddingDetails.partner1.address.toUpperCase() ||
-                account.toString().toUpperCase() ==
+                account.toString().toUpperCase() ===
                   weddingDetails.partner2.address.toUpperCase()) && (
                 <div className="flex flex-row justify-center space-x-4">
                   <div>
