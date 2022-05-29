@@ -41,7 +41,6 @@ const Register = () => {
     });
     const event = await weddingManager.on("WeddingCreated", (tokenId) => {
       console.log(tokenId.toNumber());
-      alert(`Your Wedding Id- ${tokenId.toNumber()}`);
       setTokenId(tokenId.toNumber());
       router.push({ pathname: "/wedding", query: { id: tokenId.toNumber() } });
     });
