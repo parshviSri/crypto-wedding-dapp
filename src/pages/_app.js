@@ -1,7 +1,6 @@
 import Link from "next/link";
 import "../styles/globals.css";
 import { useState, useEffect } from "react";
-import { ethers } from "ethers";
 
 function MyApp({ Component, pageProps }) {
   const [con, setCon] = useState(false);

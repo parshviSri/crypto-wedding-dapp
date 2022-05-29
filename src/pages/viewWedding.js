@@ -8,26 +8,7 @@ const ViewWedding = () => {
   const { id } = router.query;
   const contractAddress = "0xbDB63a121dE60b4036b212856928e43b82378a06"; // contract deployed on rinkeby
 
-  const [wedding1, setWedding1] = useState({
-    partner1Name: "",
-    partner2Name: "",
-  });
-  const [wedding2, setWedding2] = useState({
-    partner1Name: "",
-    partner2Name: "",
-  });
-  const [wedding3, setWedding3] = useState({
-    partner1Name: "",
-    partner2Name: "",
-  });
-  const [wedding4, setWedding4] = useState({
-    partner1Name: "",
-    partner2Name: "",
-  });
-  const [wedding5, setWedding5] = useState({
-    partner1Name: "",
-    partner2Name: "",
-  });
+ 
   const [weddings, setWeddings] = useState([]);
   useEffect(() => {
     fetchWedding();
